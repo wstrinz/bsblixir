@@ -11,6 +11,8 @@ defmodule BSB.Router do
 
   pipeline :api do
     plug :accepts, ["json"]
+
+    resources "/stories", BSB.StoryController, except: [:new, :edit]
   end
 
   scope "/", BSB do

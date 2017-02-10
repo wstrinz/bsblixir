@@ -7795,8 +7795,65 @@ var _elm_lang$html$Html$summary = _elm_lang$html$Html$node('summary');
 var _elm_lang$html$Html$menuitem = _elm_lang$html$Html$node('menuitem');
 var _elm_lang$html$Html$menu = _elm_lang$html$Html$node('menu');
 
-var _user$project$Main$main = _elm_lang$virtual_dom$Native_VirtualDom.staticProgram(
-	_elm_lang$html$Html$text('Hello from Elm'));
+var _user$project$Main$view = function (model) {
+	return A2(
+		_elm_lang$html$Html$div,
+		{ctor: '[]'},
+		{
+			ctor: '::',
+			_0: A2(
+				_elm_lang$html$Html$h2,
+				{ctor: '[]'},
+				{
+					ctor: '::',
+					_0: _elm_lang$html$Html$text(model.title),
+					_1: {ctor: '[]'}
+				}),
+			_1: {
+				ctor: '::',
+				_0: A2(
+					_elm_lang$html$Html$h4,
+					{ctor: '[]'},
+					{
+						ctor: '::',
+						_0: _elm_lang$html$Html$text(model.author),
+						_1: {ctor: '[]'}
+					}),
+				_1: {
+					ctor: '::',
+					_0: A2(
+						_elm_lang$html$Html$p,
+						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html$text(model.content),
+							_1: {ctor: '[]'}
+						}),
+					_1: {ctor: '[]'}
+				}
+			}
+		});
+};
+var _user$project$Main$update = F2(
+	function (msg, model) {
+		return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+	});
+var _user$project$Main$initialModel = {title: 'A story', author: 'Me', content: 'this is some story content'};
+var _user$project$Main$main = _elm_lang$html$Html$program(
+	{
+		init: {ctor: '_Tuple2', _0: _user$project$Main$initialModel, _1: _elm_lang$core$Platform_Cmd$none},
+		view: _user$project$Main$view,
+		update: _user$project$Main$update,
+		subscriptions: function (_p0) {
+			return _elm_lang$core$Platform_Sub$none;
+		}
+	})();
+var _user$project$Main$Model = F3(
+	function (a, b, c) {
+		return {title: a, author: b, content: c};
+	});
+var _user$project$Main$LoadStories = {ctor: 'LoadStories'};
+var _user$project$Main$Noop = {ctor: 'Noop'};
 
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
