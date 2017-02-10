@@ -9113,15 +9113,22 @@ var _elm_lang$http$Http$StringPart = F2(
 	});
 var _elm_lang$http$Http$stringPart = _elm_lang$http$Http$StringPart;
 
+var _user$project$Main$rawHtml = function (str) {
+	return A2(
+		_elm_lang$html$Html_Attributes$property,
+		'innerHTML',
+		_elm_lang$core$Json_Encode$string(str));
+};
 var _user$project$Main$errStory = function (e) {
 	return {
 		title: 'Something went wrong',
+		summary: 'this is a summary',
 		author: 'Me',
 		content: _elm_lang$core$Basics$toString(e),
 		url: ''
 	};
 };
-var _user$project$Main$blankStory = {title: 'A story', author: 'Me', content: 'this is some story content', url: '#'};
+var _user$project$Main$blankStory = {title: 'A story', author: 'Me', summary: 'this is a summary', content: 'this is some story content', url: '#'};
 var _user$project$Main$initialModel = {
 	stories: {
 		ctor: '::',
@@ -9129,27 +9136,33 @@ var _user$project$Main$initialModel = {
 		_1: {ctor: '[]'}
 	}
 };
-var _user$project$Main$Story = F4(
-	function (a, b, c, d) {
-		return {title: a, author: b, content: c, url: d};
+var _user$project$Main$Story = F5(
+	function (a, b, c, d, e) {
+		return {title: a, author: b, summary: c, content: d, url: e};
 	});
 var _user$project$Main$storyDecoder = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 	'url',
 	_elm_lang$core$Json_Decode$string,
-	A3(
-		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-		'summary',
+	A4(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+		'body',
 		_elm_lang$core$Json_Decode$string,
-		A3(
-			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-			'author',
+		'',
+		A4(
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+			'summary',
 			_elm_lang$core$Json_Decode$string,
+			'',
 			A3(
 				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-				'title',
+				'author',
 				_elm_lang$core$Json_Decode$string,
-				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Main$Story)))));
+				A3(
+					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+					'title',
+					_elm_lang$core$Json_Decode$string,
+					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Main$Story))))));
 var _user$project$Main$storyListDecorder = A2(
 	_elm_lang$core$Json_Decode$at,
 	{
@@ -9204,24 +9217,35 @@ var _user$project$Main$storyDiv = function (story) {
 						{ctor: '[]'},
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html$text(story.content),
+							_0: _elm_lang$html$Html$text(story.summary),
 							_1: {ctor: '[]'}
 						}),
 					_1: {
 						ctor: '::',
 						_0: A2(
-							_elm_lang$html$Html$button,
+							_elm_lang$html$Html$p,
 							{
 								ctor: '::',
-								_0: _elm_lang$html$Html_Events$onClick(_user$project$Main$FetchStory),
+								_0: _user$project$Main$rawHtml(story.content),
 								_1: {ctor: '[]'}
 							},
-							{
-								ctor: '::',
-								_0: _elm_lang$html$Html$text('load'),
-								_1: {ctor: '[]'}
-							}),
-						_1: {ctor: '[]'}
+							{ctor: '[]'}),
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$button,
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html_Events$onClick(_user$project$Main$FetchStory),
+									_1: {ctor: '[]'}
+								},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text('load'),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}
 					}
 				}
 			}

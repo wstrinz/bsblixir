@@ -37,6 +37,7 @@ defmodule BSB.Mixfile do
      {:phoenix_html, "~> 2.6"},
      {:feeder_ex, "~> 1.0.1"},
      {:httpoison, "~> 0.10.0"},
+     {:elixir_feed_parser, "~> 0.0.1"},
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:gettext, "~> 0.11"},
      {:cowboy, "~> 1.0"}]

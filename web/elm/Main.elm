@@ -4,12 +4,13 @@ import Html exposing (div, text)
 import Html.Events exposing (onClick)
 import Html.Attributes exposing (href)
 import Http
+import Json.Encode
 import Json.Decode as Json
 import Json.Decode.Pipeline exposing (decode, required, requiredAt, optional, hardcoded)
 
 
 type alias Story =
-    { title : String, author : String, content : String, url : String }
+    { title : String, author : String, summary : String, content : String, url : String }
 
 
 type alias Model =
@@ -24,12 +25,12 @@ type Msg
 
 blankStory : Story
 blankStory =
-    { title = "A story", author = "Me", content = "this is some story content", url = "#" }
+    { title = "A story", author = "Me", summary = "this is a summary", content = "this is some story content", url = "#" }
 
 
 errStory : a -> Story
 errStory e =
-    { title = "Something went wrong", author = "Me", content = (toString e), url = "" }
+    { title = "Something went wrong", summary = "this is a summary", author = "Me", content = (toString e), url = "" }
 
 
 initialModel : Model
@@ -67,7 +68,8 @@ storyDecoder =
     decode Story
         |> required "title" Json.string
         |> required "author" Json.string
-        |> required "summary" Json.string
+        |> optional "summary" Json.string ""
+        |> optional "body" Json.string ""
         |> required "url" Json.string
 
 
@@ -94,6 +96,11 @@ update msg model =
             ( model, Cmd.none )
 
 
+rawHtml : String -> Html.Attribute msg
+rawHtml str =
+    (Html.Attributes.property "innerHTML" (Json.Encode.string str))
+
+
 storyDiv : Story -> Html.Html Msg
 storyDiv story =
     div []
@@ -101,7 +108,8 @@ storyDiv story =
             [ Html.a [ href story.url ] [ text story.title ]
             ]
         , Html.h4 [] [ text story.author ]
-        , Html.p [] [ text story.content ]
+        , Html.p [] [ text story.summary ]
+        , Html.p [ rawHtml story.content ] []
         , Html.button [ onClick FetchStory ] [ text "load" ]
         ]
 
