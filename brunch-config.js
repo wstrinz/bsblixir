@@ -71,5 +71,7 @@ exports.config = {
 
   npm: {
     enabled: true
-  }
+  },
+
+  notifications: false
 };

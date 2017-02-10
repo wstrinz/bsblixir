@@ -2,23 +2,42 @@ module Main exposing (..)
 
 import Html exposing (div, text)
 import Html.Events exposing (onClick)
+import Html.Attributes exposing (href)
 import Http
 import Json.Decode as Json
+import Json.Decode.Pipeline exposing (decode, required, requiredAt, optional, hardcoded)
+
+
+type alias Story =
+    { title : String, author : String, content : String, url : String }
 
 
 type alias Model =
-    { title : String, author : String, content : String }
+    { stories : List Story }
 
 
 type Msg
     = Noop
-    | LoadStory (Result Http.Error String)
+    | LoadStory (Result Http.Error (List Story))
     | FetchStory
+
+
+blankStory : Story
+blankStory =
+    { title = "A story", author = "Me", content = "this is some story content", url = "#" }
+
+
+errStory : a -> Story
+errStory e =
+    { title = "Something went wrong", author = "Me", content = (toString e), url = "" }
 
 
 initialModel : Model
 initialModel =
-    { title = "A story", author = "Me", content = "this is some story content" }
+    { stories =
+        [ blankStory
+        ]
+    }
 
 
 main : Program Never Model Msg
@@ -35,17 +54,26 @@ getStory : Cmd Msg
 getStory =
     let
         storyUrl =
-            "/stories/1"
+            "/stories"
 
         req =
-            Http.get storyUrl decodeStoryData
+            Http.get storyUrl storyListDecorder
     in
         Http.send LoadStory req
 
 
-decodeStoryData : Json.Decoder String
-decodeStoryData =
-    Json.at [ "data", "title" ] Json.string
+storyDecoder : Json.Decoder Story
+storyDecoder =
+    decode Story
+        |> required "title" Json.string
+        |> required "author" Json.string
+        |> required "summary" Json.string
+        |> required "url" Json.string
+
+
+storyListDecorder : Json.Decoder (List Story)
+storyListDecorder =
+    Json.at [ "data" ] (Json.list storyDecoder)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -55,22 +83,29 @@ update msg model =
             ( model, getStory )
 
         LoadStory (Ok storyData) ->
-            ( { model | title = storyData }
+            ( { model | stories = storyData }
             , Cmd.none
             )
 
-        LoadStory (Err _) ->
-            ( model, Cmd.none )
+        LoadStory (Err e) ->
+            ( { model | stories = [ errStory e ] }, Cmd.none )
 
         _ ->
             ( model, Cmd.none )
 
 
-view : Model -> Html.Html Msg
-view model =
+storyDiv : Story -> Html.Html Msg
+storyDiv story =
     div []
-        [ Html.h2 [] [ text model.title ]
-        , Html.h4 [] [ text model.author ]
-        , Html.p [] [ text model.content ]
+        [ Html.h2 []
+            [ Html.a [ href story.url ] [ text story.title ]
+            ]
+        , Html.h4 [] [ text story.author ]
+        , Html.p [] [ text story.content ]
         , Html.button [ onClick FetchStory ] [ text "load" ]
         ]
+
+
+view : Model -> Html.Html Msg
+view model =
+    div [] <| List.map storyDiv model.stories
