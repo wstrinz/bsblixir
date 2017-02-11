@@ -1,5 +1,6 @@
 defmodule BSB.Story do
   use BSB.Web, :model
+  import Ecto.Query, only: [from: 2]
 
   schema "stories" do
     field :author, :string
@@ -22,6 +23,12 @@ defmodule BSB.Story do
     |> validate_required([:author, :title, :summary, :updated])
   end
 
+  def story_for_url(url) do
+    (from s in BSB.Story,
+      where: s.url == ^url,
+      select: s)
+    |> BSB.Repo.all
+  end
   # http://feeds.feedburner.com/RockPaperShotgun
   # http://slatestarcodex.com/feed/
 end
