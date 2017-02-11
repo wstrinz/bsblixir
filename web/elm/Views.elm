@@ -12,6 +12,16 @@ rawHtml str =
     (Html.Attributes.property "innerHTML" (Json.Encode.string str))
 
 
+controls : Model -> Html.Html Msg
+controls model =
+    div []
+        [ Html.button [ onClick FetchStory ] [ text "load" ]
+        , Html.br [] []
+        , Html.input [] []
+        , Html.button [] [ text "add" ]
+        ]
+
+
 storyDiv : Story -> Html.Html Msg
 storyDiv story =
     div []
@@ -27,6 +37,6 @@ storyDiv story =
 view : Model -> Html.Html Msg
 view model =
     div []
-        [ Html.button [ onClick FetchStory ] [ text "load" ]
+        [ controls model
         , div [] <| List.map storyDiv model.stories
         ]
