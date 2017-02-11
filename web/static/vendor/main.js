@@ -9113,13 +9113,7 @@ var _elm_lang$http$Http$StringPart = F2(
 	});
 var _elm_lang$http$Http$stringPart = _elm_lang$http$Http$StringPart;
 
-var _user$project$Main$rawHtml = function (str) {
-	return A2(
-		_elm_lang$html$Html_Attributes$property,
-		'innerHTML',
-		_elm_lang$core$Json_Encode$string(str));
-};
-var _user$project$Main$errStory = function (e) {
+var _user$project$Models$errStory = function (e) {
 	return {
 		title: 'Something went wrong',
 		summary: 'this is a summary',
@@ -9128,19 +9122,28 @@ var _user$project$Main$errStory = function (e) {
 		url: ''
 	};
 };
-var _user$project$Main$blankStory = {title: 'A story', author: 'Me', summary: 'this is a summary', content: 'this is some story content', url: '#'};
-var _user$project$Main$initialModel = {
+var _user$project$Models$blankStory = {title: 'A story', author: 'Me', summary: 'this is a summary', content: 'this is some story content', url: '#'};
+var _user$project$Models$initialModel = {
 	stories: {
 		ctor: '::',
-		_0: _user$project$Main$blankStory,
+		_0: _user$project$Models$blankStory,
 		_1: {ctor: '[]'}
 	}
 };
-var _user$project$Main$Story = F5(
+var _user$project$Models$Story = F5(
 	function (a, b, c, d, e) {
 		return {title: a, author: b, summary: c, content: d, url: e};
 	});
-var _user$project$Main$storyDecoder = A3(
+var _user$project$Models$Model = function (a) {
+	return {stories: a};
+};
+var _user$project$Models$FetchStory = {ctor: 'FetchStory'};
+var _user$project$Models$LoadStory = function (a) {
+	return {ctor: 'LoadStory', _0: a};
+};
+var _user$project$Models$Noop = {ctor: 'Noop'};
+
+var _user$project$Updates$storyDecoder = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 	'url',
 	_elm_lang$core$Json_Decode$string,
@@ -9162,20 +9165,62 @@ var _user$project$Main$storyDecoder = A3(
 					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 					'title',
 					_elm_lang$core$Json_Decode$string,
-					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Main$Story))))));
-var _user$project$Main$storyListDecorder = A2(
+					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Models$Story))))));
+var _user$project$Updates$storyListDecorder = A2(
 	_elm_lang$core$Json_Decode$at,
 	{
 		ctor: '::',
 		_0: 'data',
 		_1: {ctor: '[]'}
 	},
-	_elm_lang$core$Json_Decode$list(_user$project$Main$storyDecoder));
-var _user$project$Main$Model = function (a) {
-	return {stories: a};
+	_elm_lang$core$Json_Decode$list(_user$project$Updates$storyDecoder));
+var _user$project$Updates$getStory = function () {
+	var storyUrl = '/stories';
+	var req = A2(_elm_lang$http$Http$get, storyUrl, _user$project$Updates$storyListDecorder);
+	return A2(_elm_lang$http$Http$send, _user$project$Models$LoadStory, req);
+}();
+var _user$project$Updates$update = F2(
+	function (msg, model) {
+		var _p0 = msg;
+		switch (_p0.ctor) {
+			case 'FetchStory':
+				return {ctor: '_Tuple2', _0: model, _1: _user$project$Updates$getStory};
+			case 'LoadStory':
+				if (_p0._0.ctor === 'Ok') {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{stories: _p0._0._0}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				} else {
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								stories: {
+									ctor: '::',
+									_0: _user$project$Models$errStory(_p0._0._0),
+									_1: {ctor: '[]'}
+								}
+							}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
+				}
+			default:
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+		}
+	});
+
+var _user$project$Views$rawHtml = function (str) {
+	return A2(
+		_elm_lang$html$Html_Attributes$property,
+		'innerHTML',
+		_elm_lang$core$Json_Encode$string(str));
 };
-var _user$project$Main$FetchStory = {ctor: 'FetchStory'};
-var _user$project$Main$storyDiv = function (story) {
+var _user$project$Views$storyDiv = function (story) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{ctor: '[]'},
@@ -9226,7 +9271,7 @@ var _user$project$Main$storyDiv = function (story) {
 							_elm_lang$html$Html$p,
 							{
 								ctor: '::',
-								_0: _user$project$Main$rawHtml(story.content),
+								_0: _user$project$Views$rawHtml(story.content),
 								_1: {ctor: '[]'}
 							},
 							{ctor: '[]'}),
@@ -9236,7 +9281,7 @@ var _user$project$Main$storyDiv = function (story) {
 								_elm_lang$html$Html$button,
 								{
 									ctor: '::',
-									_0: _elm_lang$html$Html_Events$onClick(_user$project$Main$FetchStory),
+									_0: _elm_lang$html$Html_Events$onClick(_user$project$Models$FetchStory),
 									_1: {ctor: '[]'}
 								},
 								{
@@ -9251,64 +9296,22 @@ var _user$project$Main$storyDiv = function (story) {
 			}
 		});
 };
-var _user$project$Main$view = function (model) {
+var _user$project$Views$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
 		{ctor: '[]'},
-		A2(_elm_lang$core$List$map, _user$project$Main$storyDiv, model.stories));
+		A2(_elm_lang$core$List$map, _user$project$Views$storyDiv, model.stories));
 };
-var _user$project$Main$LoadStory = function (a) {
-	return {ctor: 'LoadStory', _0: a};
-};
-var _user$project$Main$getStory = function () {
-	var storyUrl = '/stories';
-	var req = A2(_elm_lang$http$Http$get, storyUrl, _user$project$Main$storyListDecorder);
-	return A2(_elm_lang$http$Http$send, _user$project$Main$LoadStory, req);
-}();
-var _user$project$Main$update = F2(
-	function (msg, model) {
-		var _p0 = msg;
-		switch (_p0.ctor) {
-			case 'FetchStory':
-				return {ctor: '_Tuple2', _0: model, _1: _user$project$Main$getStory};
-			case 'LoadStory':
-				if (_p0._0.ctor === 'Ok') {
-					return {
-						ctor: '_Tuple2',
-						_0: _elm_lang$core$Native_Utils.update(
-							model,
-							{stories: _p0._0._0}),
-						_1: _elm_lang$core$Platform_Cmd$none
-					};
-				} else {
-					return {
-						ctor: '_Tuple2',
-						_0: _elm_lang$core$Native_Utils.update(
-							model,
-							{
-								stories: {
-									ctor: '::',
-									_0: _user$project$Main$errStory(_p0._0._0),
-									_1: {ctor: '[]'}
-								}
-							}),
-						_1: _elm_lang$core$Platform_Cmd$none
-					};
-				}
-			default:
-				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
-		}
-	});
+
 var _user$project$Main$main = _elm_lang$html$Html$program(
 	{
-		init: {ctor: '_Tuple2', _0: _user$project$Main$initialModel, _1: _elm_lang$core$Platform_Cmd$none},
-		view: _user$project$Main$view,
-		update: _user$project$Main$update,
-		subscriptions: function (_p1) {
+		init: {ctor: '_Tuple2', _0: _user$project$Models$initialModel, _1: _elm_lang$core$Platform_Cmd$none},
+		view: _user$project$Views$view,
+		update: _user$project$Updates$update,
+		subscriptions: function (_p0) {
 			return _elm_lang$core$Platform_Sub$none;
 		}
 	})();
-var _user$project$Main$Noop = {ctor: 'Noop'};
 
 var Elm = {};
 Elm['Main'] = Elm['Main'] || {};
