@@ -30,7 +30,7 @@ storyDiv story =
             [ Html.a [ href story.url ] [ text story.title ]
             ]
         , Html.h4 [] [ text story.author ]
-        , Html.p [] [ text story.summary ]
+        , Html.p [ rawHtml story.summary ] []
         , Html.p [ rawHtml story.content ] []
         ]
 

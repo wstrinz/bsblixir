@@ -9444,12 +9444,12 @@ var _user$project$Views$storyDiv = function (story) {
 					ctor: '::',
 					_0: A2(
 						_elm_lang$html$Html$p,
-						{ctor: '[]'},
 						{
 							ctor: '::',
-							_0: _elm_lang$html$Html$text(story.summary),
+							_0: _user$project$Views$rawHtml(story.summary),
 							_1: {ctor: '[]'}
-						}),
+						},
+						{ctor: '[]'}),
 					_1: {
 						ctor: '::',
 						_0: A2(

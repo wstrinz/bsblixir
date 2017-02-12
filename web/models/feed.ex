@@ -49,4 +49,9 @@ defmodule BSB.Feed do
   def update_feed(feed) do
     BSB.StoryFetcher.load_stories(feed.feed_url)
   end
+
+  def update_feeds do
+    BSB.Repo.all(BSB.Feed)
+    |> Enum.map(&update_feed/1)
+  end
 end
