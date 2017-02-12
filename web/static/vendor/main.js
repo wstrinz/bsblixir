@@ -9136,6 +9136,10 @@ var _user$project$Models$Story = F5(
 	function (a, b, c, d, e) {
 		return {title: a, author: b, summary: c, content: d, url: e};
 	});
+var _user$project$Models$Feed = F6(
+	function (a, b, c, d, e, f) {
+		return {title: a, description: b, url: c, feed_url: d, updated: e, id: f};
+	});
 var _user$project$Models$RequestStatus = function (a) {
 	return {status: a};
 };
@@ -9146,8 +9150,9 @@ var _user$project$Models$Model = F3(
 var _user$project$Models$AddFeedResponse = function (a) {
 	return {ctor: 'AddFeedResponse', _0: a};
 };
-var _user$project$Models$AddFeed = function (a) {
-	return {ctor: 'AddFeed', _0: a};
+var _user$project$Models$AddFeed = {ctor: 'AddFeed'};
+var _user$project$Models$SetFeedToAdd = function (a) {
+	return {ctor: 'SetFeedToAdd', _0: a};
 };
 var _user$project$Models$FetchStory = {ctor: 'FetchStory'};
 var _user$project$Models$LoadStory = function (a) {
@@ -9155,6 +9160,52 @@ var _user$project$Models$LoadStory = function (a) {
 };
 var _user$project$Models$Noop = {ctor: 'Noop'};
 
+var _user$project$Updates$feedDecoder = A3(
+	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+	'id',
+	_elm_lang$core$Json_Decode$int,
+	A3(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+		'updated',
+		_elm_lang$core$Json_Decode$string,
+		A3(
+			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+			'feed_url',
+			_elm_lang$core$Json_Decode$string,
+			A3(
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+				'url',
+				_elm_lang$core$Json_Decode$string,
+				A4(
+					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+					'description',
+					_elm_lang$core$Json_Decode$string,
+					'',
+					A3(
+						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+						'title',
+						_elm_lang$core$Json_Decode$string,
+						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Models$Feed)))))));
+var _user$project$Updates$feedRespDecoder = A2(
+	_elm_lang$core$Json_Decode$at,
+	{
+		ctor: '::',
+		_0: 'data',
+		_1: {ctor: '[]'}
+	},
+	_user$project$Updates$feedDecoder);
+var _user$project$Updates$feedAddEncoder = function (model) {
+	return _elm_lang$core$Json_Encode$object(
+		{
+			ctor: '::',
+			_0: {
+				ctor: '_Tuple2',
+				_0: 'url',
+				_1: _elm_lang$core$Json_Encode$string(model.feedToAdd)
+			},
+			_1: {ctor: '[]'}
+		});
+};
 var _user$project$Updates$storyDecoder = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
 	'url',
@@ -9190,10 +9241,17 @@ var _user$project$Updates$getStories = A2(
 	_elm_lang$http$Http$send,
 	_user$project$Models$LoadStory,
 	A2(_elm_lang$http$Http$get, '/stories', _user$project$Updates$storyListDecorder));
-var _user$project$Updates$addFeed = A2(
-	_elm_lang$http$Http$send,
-	_user$project$Models$LoadStory,
-	A2(_elm_lang$http$Http$get, '/stories', _user$project$Updates$storyListDecorder));
+var _user$project$Updates$addFeed = function (model) {
+	return A2(
+		_elm_lang$http$Http$send,
+		_user$project$Models$AddFeedResponse,
+		A3(
+			_elm_lang$http$Http$post,
+			'/feeds',
+			_elm_lang$http$Http$jsonBody(
+				_user$project$Updates$feedAddEncoder(model)),
+			_user$project$Updates$feedRespDecoder));
+};
 var _user$project$Updates$update = F2(
 	function (msg, model) {
 		var _p0 = msg;
@@ -9225,13 +9283,52 @@ var _user$project$Updates$update = F2(
 					};
 				}
 			case 'AddFeed':
-				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							requestStatus: {
+								status: A2(_elm_lang$core$Basics_ops['++'], 'adding ', model.feedToAdd)
+							}
+						}),
+					_1: _user$project$Updates$addFeed(model)
+				};
 			case 'AddFeedResponse':
 				if (_p0._0.ctor === 'Ok') {
-					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								requestStatus: {status: 'added feed'}
+							}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
 				} else {
-					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+					return {
+						ctor: '_Tuple2',
+						_0: _elm_lang$core$Native_Utils.update(
+							model,
+							{
+								requestStatus: {
+									status: A2(
+										_elm_lang$core$Basics_ops['++'],
+										'failed to add feed! ',
+										_elm_lang$core$Basics$toString(_p0._0._0))
+								}
+							}),
+						_1: _elm_lang$core$Platform_Cmd$none
+					};
 				}
+			case 'SetFeedToAdd':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{feedToAdd: _p0._0}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 			default:
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 		}
@@ -9265,19 +9362,38 @@ var _user$project$Views$controls = function (model) {
 					ctor: '::',
 					_0: A2(
 						_elm_lang$html$Html$input,
-						{ctor: '[]'},
+						{
+							ctor: '::',
+							_0: _elm_lang$html$Html_Events$onInput(_user$project$Models$SetFeedToAdd),
+							_1: {ctor: '[]'}
+						},
 						{ctor: '[]'}),
 					_1: {
 						ctor: '::',
 						_0: A2(
 							_elm_lang$html$Html$button,
-							{ctor: '[]'},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Events$onClick(_user$project$Models$AddFeed),
+								_1: {ctor: '[]'}
+							},
 							{
 								ctor: '::',
 								_0: _elm_lang$html$Html$text('add'),
 								_1: {ctor: '[]'}
 							}),
-						_1: {ctor: '[]'}
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$p,
+								{ctor: '[]'},
+								{
+									ctor: '::',
+									_0: _elm_lang$html$Html$text(model.requestStatus.status),
+									_1: {ctor: '[]'}
+								}),
+							_1: {ctor: '[]'}
+						}
 					}
 				}
 			}

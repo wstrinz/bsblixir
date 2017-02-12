@@ -4,7 +4,7 @@ defmodule BSB.Repo.Migrations.CreateFeed do
   def change do
     create table(:feeds) do
       add :title, :string
-      add :description, :string
+      add :description, :text
       add :url, :string
       add :feed_url, :string
       add :updated, :naive_datetime

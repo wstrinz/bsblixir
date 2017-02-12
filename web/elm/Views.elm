@@ -1,7 +1,7 @@
 module Views exposing (..)
 
 import Html exposing (div, text)
-import Html.Events exposing (onClick)
+import Html.Events exposing (onClick, onInput)
 import Html.Attributes exposing (href)
 import Json.Encode
 import Models exposing (Model, Story, Msg(..))
@@ -17,8 +17,9 @@ controls model =
     div []
         [ Html.button [ onClick FetchStory ] [ text "load" ]
         , Html.br [] []
-        , Html.input [] []
-        , Html.button [] [ text "add" ]
+        , Html.input [ onInput SetFeedToAdd ] []
+        , Html.button [ onClick AddFeed ] [ text "add" ]
+        , Html.p [] [ text model.requestStatus.status ]
         ]
 
 

@@ -4,7 +4,22 @@ import Http
 
 
 type alias Story =
-    { title : String, author : String, summary : String, content : String, url : String }
+    { title : String
+    , author : String
+    , summary : String
+    , content : String
+    , url : String
+    }
+
+
+type alias Feed =
+    { title : String
+    , description : String
+    , url : String
+    , feed_url : String
+    , updated : String
+    , id : Int
+    }
 
 
 type alias RequestStatus =
@@ -15,16 +30,13 @@ type alias Model =
     { stories : List Story, requestStatus : RequestStatus, feedToAdd : String }
 
 
-
-{- Msg should have List Feed -}
-
-
 type Msg
     = Noop
     | LoadStory (Result Http.Error (List Story))
     | FetchStory
-    | AddFeed String
-    | AddFeedResponse (Result Http.Error (List Story))
+    | SetFeedToAdd String
+    | AddFeed
+    | AddFeedResponse (Result Http.Error Feed)
 
 
 blankStory : Story
