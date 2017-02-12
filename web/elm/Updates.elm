@@ -10,7 +10,7 @@ update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
         FetchStory ->
-            ( model, getStory )
+            ( model, getStories )
 
         LoadStory (Ok storyData) ->
             ( { model | stories = storyData }
@@ -20,20 +20,27 @@ update msg model =
         LoadStory (Err e) ->
             ( { model | stories = [ errStory e ] }, Cmd.none )
 
-        _ ->
+        AddFeed feed_url ->
+            ( model, Cmd.none )
+
+        AddFeedResponse (Ok feedResp) ->
+            ( model, Cmd.none )
+
+        AddFeedResponse (Err feedResp) ->
+            ( model, Cmd.none )
+
+        Noop ->
             ( model, Cmd.none )
 
 
-getStory : Cmd Msg
-getStory =
-    let
-        storyUrl =
-            "/stories"
+addFeed : Cmd Msg
+addFeed =
+    Http.send LoadStory <| Http.get "/stories" storyListDecorder
 
-        req =
-            Http.get storyUrl storyListDecorder
-    in
-        Http.send LoadStory req
+
+getStories : Cmd Msg
+getStories =
+    Http.send LoadStory <| Http.get "/stories" storyListDecorder
 
 
 storyDecoder : Json.Decoder Story

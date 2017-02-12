@@ -13,6 +13,7 @@ defmodule BSB.Router do
     plug :accepts, ["json"]
 
     resources "/stories", BSB.StoryController, except: [:new, :edit]
+    resources "/feeds", BSB.FeedController, except: [:new, :edit]
   end
 
   scope "/", BSB do

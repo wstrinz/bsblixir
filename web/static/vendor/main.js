@@ -9128,14 +9128,26 @@ var _user$project$Models$initialModel = {
 		ctor: '::',
 		_0: _user$project$Models$blankStory,
 		_1: {ctor: '[]'}
-	}
+	},
+	requestStatus: {status: 'init'},
+	feedToAdd: ''
 };
 var _user$project$Models$Story = F5(
 	function (a, b, c, d, e) {
 		return {title: a, author: b, summary: c, content: d, url: e};
 	});
-var _user$project$Models$Model = function (a) {
-	return {stories: a};
+var _user$project$Models$RequestStatus = function (a) {
+	return {status: a};
+};
+var _user$project$Models$Model = F3(
+	function (a, b, c) {
+		return {stories: a, requestStatus: b, feedToAdd: c};
+	});
+var _user$project$Models$AddFeedResponse = function (a) {
+	return {ctor: 'AddFeedResponse', _0: a};
+};
+var _user$project$Models$AddFeed = function (a) {
+	return {ctor: 'AddFeed', _0: a};
 };
 var _user$project$Models$FetchStory = {ctor: 'FetchStory'};
 var _user$project$Models$LoadStory = function (a) {
@@ -9174,17 +9186,20 @@ var _user$project$Updates$storyListDecorder = A2(
 		_1: {ctor: '[]'}
 	},
 	_elm_lang$core$Json_Decode$list(_user$project$Updates$storyDecoder));
-var _user$project$Updates$getStory = function () {
-	var storyUrl = '/stories';
-	var req = A2(_elm_lang$http$Http$get, storyUrl, _user$project$Updates$storyListDecorder);
-	return A2(_elm_lang$http$Http$send, _user$project$Models$LoadStory, req);
-}();
+var _user$project$Updates$getStories = A2(
+	_elm_lang$http$Http$send,
+	_user$project$Models$LoadStory,
+	A2(_elm_lang$http$Http$get, '/stories', _user$project$Updates$storyListDecorder));
+var _user$project$Updates$addFeed = A2(
+	_elm_lang$http$Http$send,
+	_user$project$Models$LoadStory,
+	A2(_elm_lang$http$Http$get, '/stories', _user$project$Updates$storyListDecorder));
 var _user$project$Updates$update = F2(
 	function (msg, model) {
 		var _p0 = msg;
 		switch (_p0.ctor) {
 			case 'FetchStory':
-				return {ctor: '_Tuple2', _0: model, _1: _user$project$Updates$getStory};
+				return {ctor: '_Tuple2', _0: model, _1: _user$project$Updates$getStories};
 			case 'LoadStory':
 				if (_p0._0.ctor === 'Ok') {
 					return {
@@ -9208,6 +9223,14 @@ var _user$project$Updates$update = F2(
 							}),
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
+				}
+			case 'AddFeed':
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+			case 'AddFeedResponse':
+				if (_p0._0.ctor === 'Ok') {
+					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+				} else {
+					return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 				}
 			default:
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};

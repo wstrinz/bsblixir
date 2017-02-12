@@ -7,14 +7,24 @@ type alias Story =
     { title : String, author : String, summary : String, content : String, url : String }
 
 
+type alias RequestStatus =
+    { status : String }
+
+
 type alias Model =
-    { stories : List Story }
+    { stories : List Story, requestStatus : RequestStatus, feedToAdd : String }
+
+
+
+{- Msg should have List Feed -}
 
 
 type Msg
     = Noop
     | LoadStory (Result Http.Error (List Story))
     | FetchStory
+    | AddFeed String
+    | AddFeedResponse (Result Http.Error (List Story))
 
 
 blankStory : Story
@@ -29,7 +39,7 @@ errStory e =
 
 initialModel : Model
 initialModel =
-    { stories =
-        [ blankStory
-        ]
+    { stories = [ blankStory ]
+    , requestStatus = { status = "init" }
+    , feedToAdd = ""
     }
