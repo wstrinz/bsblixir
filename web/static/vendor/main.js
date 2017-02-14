@@ -9117,46 +9117,35 @@ var _user$project$Models$findNext = F2(
 	function (target, currList) {
 		findNext:
 		while (true) {
-			var t = _elm_lang$core$List$tail(currList);
-			var rest = function () {
-				var _p0 = t;
-				if (_p0.ctor === 'Nothing') {
-					return {ctor: '[]'};
-				} else {
-					return _p0._0;
-				}
-			}();
-			var currItem = _elm_lang$core$List$head(currList);
-			var _p1 = currItem;
-			if (_p1.ctor === 'Nothing') {
-				return currItem;
+			var _p0 = currList;
+			if (_p0.ctor === '[]') {
+				return _elm_lang$core$Maybe$Nothing;
 			} else {
-				if (_elm_lang$core$Native_Utils.eq(_p1._0.id, target)) {
-					return _elm_lang$core$List$head(rest);
+				if (_p0._1.ctor === '[]') {
+					return _elm_lang$core$Maybe$Nothing;
 				} else {
-					var _v2 = target,
-						_v3 = rest;
-					target = _v2;
-					currList = _v3;
-					continue findNext;
+					var _p1 = _p0._1._0;
+					if (_elm_lang$core$Native_Utils.eq(_p0._0.id, target)) {
+						return _elm_lang$core$Maybe$Just(_p1);
+					} else {
+						var _v1 = target,
+							_v2 = {ctor: '::', _0: _p1, _1: _p0._1._1};
+						target = _v1;
+						currList = _v2;
+						continue findNext;
+					}
 				}
 			}
 		}
 	});
 var _user$project$Models$nextOrHead = F2(
-	function (target, stories) {
-		var firstStory = _elm_lang$core$List$head(stories);
-		var _p2 = A2(_user$project$Models$findNext, target, stories);
-		if (_p2.ctor === 'Just') {
-			return _p2._0.id;
-		} else {
-			var _p3 = firstStory;
-			if (_p3.ctor === 'Just') {
-				return _p3._0.id;
-			} else {
-				return -1;
-			}
-		}
+	function (target, storyList) {
+		return A2(
+			_elm_lang$core$Maybe$map,
+			function (_) {
+				return _.id;
+			},
+			A2(_user$project$Models$findNext, target, storyList));
 	});
 var _user$project$Models$errStory = function (e) {
 	return {
@@ -9176,9 +9165,9 @@ var _user$project$Models$currStory = function (model) {
 				return _elm_lang$core$Native_Utils.eq(model.currentStory, s.id);
 			},
 			model.stories));
-	var _p4 = matched;
-	if (_p4.ctor === 'Just') {
-		return _p4._0;
+	var _p2 = matched;
+	if (_p2.ctor === 'Just') {
+		return _p2._0;
 	} else {
 		return _user$project$Models$errStory('couldn\'t find currentStory');
 	}
@@ -9398,26 +9387,38 @@ var _user$project$Updates$update = F2(
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'NextStory':
+				var newCurr = function () {
+					var _p1 = A2(_user$project$Models$nextOrHead, model.currentStory, model.stories);
+					if (_p1.ctor === 'Just') {
+						return _p1._0;
+					} else {
+						return -1;
+					}
+				}();
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{
-							currentStory: A2(_user$project$Models$nextOrHead, model.currentStory, model.stories)
-						}),
+						{currentStory: newCurr}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'PrevStory':
+				var newCurr = function () {
+					var _p2 = A2(
+						_user$project$Models$nextOrHead,
+						model.currentStory,
+						_elm_lang$core$List$reverse(model.stories));
+					if (_p2.ctor === 'Just') {
+						return _p2._0;
+					} else {
+						return -1;
+					}
+				}();
 				return {
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{
-							currentStory: A2(
-								_user$project$Models$nextOrHead,
-								model.currentStory,
-								_elm_lang$core$List$reverse(model.stories))
-						}),
+						{currentStory: newCurr}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			default:

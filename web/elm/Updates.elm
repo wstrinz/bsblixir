@@ -34,10 +34,28 @@ update msg model =
             ( { model | feedToAdd = feedUrl }, Cmd.none )
 
         NextStory ->
-            ( { model | currentStory = nextOrHead model.currentStory model.stories }, Cmd.none )
+            let
+                newCurr =
+                    case nextOrHead model.currentStory model.stories of
+                        Just sid ->
+                            sid
+
+                        Nothing ->
+                            -1
+            in
+                ( { model | currentStory = newCurr }, Cmd.none )
 
         PrevStory ->
-            ( { model | currentStory = nextOrHead model.currentStory (List.reverse model.stories) }, Cmd.none )
+            let
+                newCurr =
+                    case nextOrHead model.currentStory (List.reverse model.stories) of
+                        Just sid ->
+                            sid
+
+                        Nothing ->
+                            -1
+            in
+                ( { model | currentStory = newCurr }, Cmd.none )
 
         Noop ->
             ( model, Cmd.none )

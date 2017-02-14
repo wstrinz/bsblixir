@@ -66,51 +66,25 @@ currStory model =
                 errStory "couldn't find currentStory"
 
 
-nextOrHead : Int -> List Story -> Int
-nextOrHead target stories =
-    let
-        firstStory =
-            List.head stories
-    in
-        case findNext target stories of
-            Just s ->
-                s.id
-
-            Nothing ->
-                case firstStory of
-                    Just s ->
-                        s.id
-
-                    Nothing ->
-                        -1
+nextOrHead : Int -> List Story -> Maybe Int
+nextOrHead target storyList =
+    Maybe.map .id <| findNext target storyList
 
 
 findNext : Int -> List Story -> Maybe Story
 findNext target currList =
-    let
-        currItem =
-            List.head currList
+    case currList of
+        [] ->
+            Nothing
 
-        t =
-            List.tail currList
+        hd :: [] ->
+            Nothing
 
-        rest =
-            case t of
-                Nothing ->
-                    []
-
-                Just r ->
-                    r
-    in
-        case currItem of
-            Nothing ->
-                currItem
-
-            Just li ->
-                if li.id == target then
-                    List.head <| rest
-                else
-                    findNext target rest
+        hd :: next :: tl ->
+            if hd.id == target then
+                Just next
+            else
+                findNext target <| next :: tl
 
 
 initialModel : Model
