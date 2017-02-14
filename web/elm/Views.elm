@@ -15,7 +15,7 @@ rawHtml str =
 controls : Model -> Html.Html Msg
 controls model =
     div []
-        [ Html.button [ onClick FetchStory ] [ text "load" ]
+        [ Html.button [ onClick FetchStory ] [ text "fetch" ]
         , Html.br [] []
         , Html.input [ onInput SetFeedToAdd ] []
         , Html.button [ onClick AddFeed ] [ text "add" ]
