@@ -39,6 +39,7 @@ type Msg
     | AddFeed
     | AddFeedResponse (Result Http.Error Feed)
     | NextStory
+    | PrevStory
 
 
 blankStory : Story

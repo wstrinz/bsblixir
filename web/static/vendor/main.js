@@ -9149,6 +9149,7 @@ var _user$project$Models$Model = F4(
 	function (a, b, c, d) {
 		return {stories: a, requestStatus: b, feedToAdd: c, currentStory: d};
 	});
+var _user$project$Models$PrevStory = {ctor: 'PrevStory'};
 var _user$project$Models$NextStory = {ctor: 'NextStory'};
 var _user$project$Models$AddFeedResponse = function (a) {
 	return {ctor: 'AddFeedResponse', _0: a};
@@ -9259,19 +9260,64 @@ var _user$project$Updates$addFeed = function (model) {
 				_user$project$Updates$feedAddEncoder(model)),
 			_user$project$Updates$feedRespDecoder));
 };
+var _user$project$Updates$findNext = F2(
+	function (target, currList) {
+		findNext:
+		while (true) {
+			var t = _elm_lang$core$List$tail(currList);
+			var rest = function () {
+				var _p0 = t;
+				if (_p0.ctor === 'Nothing') {
+					return {ctor: '[]'};
+				} else {
+					return _p0._0;
+				}
+			}();
+			var currItem = _elm_lang$core$List$head(currList);
+			var _p1 = currItem;
+			if (_p1.ctor === 'Nothing') {
+				return currItem;
+			} else {
+				if (_elm_lang$core$Native_Utils.eq(_p1._0.id, target)) {
+					return _elm_lang$core$List$head(rest);
+				} else {
+					var _v2 = target,
+						_v3 = rest;
+					target = _v2;
+					currList = _v3;
+					continue findNext;
+				}
+			}
+		}
+	});
+var _user$project$Updates$nextOrHead = F2(
+	function (target, stories) {
+		var firstStory = _elm_lang$core$List$head(stories);
+		var _p2 = A2(_user$project$Updates$findNext, target, stories);
+		if (_p2.ctor === 'Just') {
+			return _p2._0.id;
+		} else {
+			var _p3 = firstStory;
+			if (_p3.ctor === 'Just') {
+				return _p3._0.id;
+			} else {
+				return -1;
+			}
+		}
+	});
 var _user$project$Updates$update = F2(
 	function (msg, model) {
-		var _p0 = msg;
-		switch (_p0.ctor) {
+		var _p4 = msg;
+		switch (_p4.ctor) {
 			case 'FetchStory':
 				return {ctor: '_Tuple2', _0: model, _1: _user$project$Updates$getStories};
 			case 'LoadStory':
-				if (_p0._0.ctor === 'Ok') {
+				if (_p4._0.ctor === 'Ok') {
 					return {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
 							model,
-							{stories: _p0._0._0}),
+							{stories: _p4._0._0}),
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
 				} else {
@@ -9282,7 +9328,7 @@ var _user$project$Updates$update = F2(
 							{
 								stories: {
 									ctor: '::',
-									_0: _user$project$Models$errStory(_p0._0._0),
+									_0: _user$project$Models$errStory(_p4._0._0),
 									_1: {ctor: '[]'}
 								}
 							}),
@@ -9302,7 +9348,7 @@ var _user$project$Updates$update = F2(
 					_1: _user$project$Updates$addFeed(model)
 				};
 			case 'AddFeedResponse':
-				if (_p0._0.ctor === 'Ok') {
+				if (_p4._0.ctor === 'Ok') {
 					return {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
@@ -9322,7 +9368,7 @@ var _user$project$Updates$update = F2(
 									status: A2(
 										_elm_lang$core$Basics_ops['++'],
 										'failed to add feed! ',
-										_elm_lang$core$Basics$toString(_p0._0._0))
+										_elm_lang$core$Basics$toString(_p4._0._0))
 								}
 							}),
 						_1: _elm_lang$core$Platform_Cmd$none
@@ -9333,11 +9379,32 @@ var _user$project$Updates$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{feedToAdd: _p0._0}),
+						{feedToAdd: _p4._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'NextStory':
-				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							currentStory: A2(_user$project$Updates$nextOrHead, model.currentStory, model.stories)
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
+			case 'PrevStory':
+				return {
+					ctor: '_Tuple2',
+					_0: _elm_lang$core$Native_Utils.update(
+						model,
+						{
+							currentStory: A2(
+								_user$project$Updates$nextOrHead,
+								model.currentStory,
+								_elm_lang$core$List$reverse(model.stories))
+						}),
+					_1: _elm_lang$core$Platform_Cmd$none
+				};
 			default:
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 		}
@@ -9401,7 +9468,37 @@ var _user$project$Views$controls = function (model) {
 									_0: _elm_lang$html$Html$text(model.requestStatus.status),
 									_1: {ctor: '[]'}
 								}),
-							_1: {ctor: '[]'}
+							_1: {
+								ctor: '::',
+								_0: A2(
+									_elm_lang$html$Html$button,
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html_Events$onClick(_user$project$Models$PrevStory),
+										_1: {ctor: '[]'}
+									},
+									{
+										ctor: '::',
+										_0: _elm_lang$html$Html$text('-'),
+										_1: {ctor: '[]'}
+									}),
+								_1: {
+									ctor: '::',
+									_0: A2(
+										_elm_lang$html$Html$button,
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html_Events$onClick(_user$project$Models$NextStory),
+											_1: {ctor: '[]'}
+										},
+										{
+											ctor: '::',
+											_0: _elm_lang$html$Html$text('+'),
+											_1: {ctor: '[]'}
+										}),
+									_1: {ctor: '[]'}
+								}
+							}
 						}
 					}
 				}

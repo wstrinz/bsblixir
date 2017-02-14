@@ -34,10 +34,60 @@ update msg model =
             ( { model | feedToAdd = feedUrl }, Cmd.none )
 
         NextStory ->
-            ( model, Cmd.none )
+            ( { model | currentStory = nextOrHead model.currentStory model.stories }, Cmd.none )
+
+        PrevStory ->
+            ( { model | currentStory = nextOrHead model.currentStory (List.reverse model.stories) }, Cmd.none )
 
         Noop ->
             ( model, Cmd.none )
+
+
+nextOrHead : Int -> List Story -> Int
+nextOrHead target stories =
+    let
+        firstStory =
+            List.head stories
+    in
+        case findNext target stories of
+            Just s ->
+                s.id
+
+            Nothing ->
+                case firstStory of
+                    Just s ->
+                        s.id
+
+                    Nothing ->
+                        -1
+
+
+findNext : Int -> List Story -> Maybe Story
+findNext target currList =
+    let
+        currItem =
+            List.head currList
+
+        t =
+            List.tail currList
+
+        rest =
+            case t of
+                Nothing ->
+                    []
+
+                Just r ->
+                    r
+    in
+        case currItem of
+            Nothing ->
+                currItem
+
+            Just li ->
+                if li.id == target then
+                    List.head <| rest
+                else
+                    findNext target rest
 
 
 addFeed : Model -> Cmd Msg

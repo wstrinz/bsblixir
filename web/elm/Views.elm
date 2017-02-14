@@ -20,6 +20,8 @@ controls model =
         , Html.input [ onInput SetFeedToAdd ] []
         , Html.button [ onClick AddFeed ] [ text "add" ]
         , Html.p [] [ text model.requestStatus.status ]
+        , Html.button [ onClick PrevStory ] [ text "-" ]
+        , Html.button [ onClick NextStory ] [ text "+" ]
         ]
 
 
