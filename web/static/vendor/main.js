@@ -9119,10 +9119,11 @@ var _user$project$Models$errStory = function (e) {
 		summary: 'this is a summary',
 		author: 'Me',
 		content: _elm_lang$core$Basics$toString(e),
-		url: ''
+		url: '',
+		id: -1
 	};
 };
-var _user$project$Models$blankStory = {title: 'A story', author: 'Me', summary: 'this is a summary', content: 'this is some story content', url: '#'};
+var _user$project$Models$blankStory = {title: 'A story', author: 'Me', summary: 'this is a summary', content: 'this is some story content', url: '#', id: -1};
 var _user$project$Models$initialModel = {
 	stories: {
 		ctor: '::',
@@ -9130,11 +9131,12 @@ var _user$project$Models$initialModel = {
 		_1: {ctor: '[]'}
 	},
 	requestStatus: {status: 'init'},
-	feedToAdd: ''
+	feedToAdd: '',
+	currentStory: 17
 };
-var _user$project$Models$Story = F5(
-	function (a, b, c, d, e) {
-		return {title: a, author: b, summary: c, content: d, url: e};
+var _user$project$Models$Story = F6(
+	function (a, b, c, d, e, f) {
+		return {title: a, author: b, summary: c, content: d, url: e, id: f};
 	});
 var _user$project$Models$Feed = F6(
 	function (a, b, c, d, e, f) {
@@ -9143,10 +9145,11 @@ var _user$project$Models$Feed = F6(
 var _user$project$Models$RequestStatus = function (a) {
 	return {status: a};
 };
-var _user$project$Models$Model = F3(
-	function (a, b, c) {
-		return {stories: a, requestStatus: b, feedToAdd: c};
+var _user$project$Models$Model = F4(
+	function (a, b, c, d) {
+		return {stories: a, requestStatus: b, feedToAdd: c, currentStory: d};
 	});
+var _user$project$Models$NextStory = {ctor: 'NextStory'};
 var _user$project$Models$AddFeedResponse = function (a) {
 	return {ctor: 'AddFeedResponse', _0: a};
 };
@@ -9208,27 +9211,31 @@ var _user$project$Updates$feedAddEncoder = function (model) {
 };
 var _user$project$Updates$storyDecoder = A3(
 	_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-	'url',
-	_elm_lang$core$Json_Decode$string,
-	A4(
-		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-		'body',
+	'id',
+	_elm_lang$core$Json_Decode$int,
+	A3(
+		_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+		'url',
 		_elm_lang$core$Json_Decode$string,
-		'',
 		A4(
 			_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
-			'summary',
+			'body',
 			_elm_lang$core$Json_Decode$string,
 			'',
-			A3(
-				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-				'author',
+			A4(
+				_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$optional,
+				'summary',
 				_elm_lang$core$Json_Decode$string,
+				'',
 				A3(
 					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
-					'title',
+					'author',
 					_elm_lang$core$Json_Decode$string,
-					_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Models$Story))))));
+					A3(
+						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$required,
+						'title',
+						_elm_lang$core$Json_Decode$string,
+						_NoRedInk$elm_decode_pipeline$Json_Decode_Pipeline$decode(_user$project$Models$Story)))))));
 var _user$project$Updates$storyListDecorder = A2(
 	_elm_lang$core$Json_Decode$at,
 	{
@@ -9329,6 +9336,8 @@ var _user$project$Updates$update = F2(
 						{feedToAdd: _p0._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
+			case 'NextStory':
+				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 			default:
 				return {ctor: '_Tuple2', _0: model, _1: _elm_lang$core$Platform_Cmd$none};
 		}
@@ -9405,67 +9414,78 @@ var _user$project$Views$rawHtml = function (str) {
 		'innerHTML',
 		_elm_lang$core$Json_Encode$string(str));
 };
-var _user$project$Views$storyDiv = function (story) {
-	return A2(
-		_elm_lang$html$Html$div,
-		{ctor: '[]'},
-		{
+var _user$project$Views$storyDiv = F2(
+	function (model, story) {
+		var attrs = _elm_lang$core$Native_Utils.eq(model.currentStory, story.id) ? {
 			ctor: '::',
-			_0: A2(
-				_elm_lang$html$Html$h2,
-				{ctor: '[]'},
+			_0: _elm_lang$html$Html_Attributes$style(
 				{
 					ctor: '::',
-					_0: A2(
-						_elm_lang$html$Html$a,
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html_Attributes$href(story.url),
-							_1: {ctor: '[]'}
-						},
-						{
-							ctor: '::',
-							_0: _elm_lang$html$Html$text(story.title),
-							_1: {ctor: '[]'}
-						}),
+					_0: {ctor: '_Tuple2', _0: 'border', _1: '2px solid #000'},
 					_1: {ctor: '[]'}
 				}),
-			_1: {
+			_1: {ctor: '[]'}
+		} : {ctor: '[]'};
+		return A2(
+			_elm_lang$html$Html$div,
+			attrs,
+			{
 				ctor: '::',
 				_0: A2(
-					_elm_lang$html$Html$h4,
+					_elm_lang$html$Html$h2,
 					{ctor: '[]'},
 					{
 						ctor: '::',
-						_0: _elm_lang$html$Html$text(story.author),
+						_0: A2(
+							_elm_lang$html$Html$a,
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html_Attributes$href(story.url),
+								_1: {ctor: '[]'}
+							},
+							{
+								ctor: '::',
+								_0: _elm_lang$html$Html$text(story.title),
+								_1: {ctor: '[]'}
+							}),
 						_1: {ctor: '[]'}
 					}),
 				_1: {
 					ctor: '::',
 					_0: A2(
-						_elm_lang$html$Html$p,
+						_elm_lang$html$Html$h4,
+						{ctor: '[]'},
 						{
 							ctor: '::',
-							_0: _user$project$Views$rawHtml(story.summary),
+							_0: _elm_lang$html$Html$text(story.author),
 							_1: {ctor: '[]'}
-						},
-						{ctor: '[]'}),
+						}),
 					_1: {
 						ctor: '::',
 						_0: A2(
 							_elm_lang$html$Html$p,
 							{
 								ctor: '::',
-								_0: _user$project$Views$rawHtml(story.content),
+								_0: _user$project$Views$rawHtml(story.summary),
 								_1: {ctor: '[]'}
 							},
 							{ctor: '[]'}),
-						_1: {ctor: '[]'}
+						_1: {
+							ctor: '::',
+							_0: A2(
+								_elm_lang$html$Html$p,
+								{
+									ctor: '::',
+									_0: _user$project$Views$rawHtml(story.content),
+									_1: {ctor: '[]'}
+								},
+								{ctor: '[]'}),
+							_1: {ctor: '[]'}
+						}
 					}
 				}
-			}
-		});
-};
+			});
+	});
 var _user$project$Views$view = function (model) {
 	return A2(
 		_elm_lang$html$Html$div,
@@ -9478,7 +9498,10 @@ var _user$project$Views$view = function (model) {
 				_0: A2(
 					_elm_lang$html$Html$div,
 					{ctor: '[]'},
-					A2(_elm_lang$core$List$map, _user$project$Views$storyDiv, model.stories)),
+					A2(
+						_elm_lang$core$List$map,
+						_user$project$Views$storyDiv(model),
+						model.stories)),
 				_1: {ctor: '[]'}
 			}
 		});

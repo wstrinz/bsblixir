@@ -9,6 +9,7 @@ type alias Story =
     , summary : String
     , content : String
     , url : String
+    , id : Int
     }
 
 
@@ -27,7 +28,7 @@ type alias RequestStatus =
 
 
 type alias Model =
-    { stories : List Story, requestStatus : RequestStatus, feedToAdd : String }
+    { stories : List Story, requestStatus : RequestStatus, feedToAdd : String, currentStory : Int }
 
 
 type Msg
@@ -37,16 +38,17 @@ type Msg
     | SetFeedToAdd String
     | AddFeed
     | AddFeedResponse (Result Http.Error Feed)
+    | NextStory
 
 
 blankStory : Story
 blankStory =
-    { title = "A story", author = "Me", summary = "this is a summary", content = "this is some story content", url = "#" }
+    { title = "A story", author = "Me", summary = "this is a summary", content = "this is some story content", url = "#", id = -1 }
 
 
 errStory : a -> Story
 errStory e =
-    { title = "Something went wrong", summary = "this is a summary", author = "Me", content = (toString e), url = "" }
+    { title = "Something went wrong", summary = "this is a summary", author = "Me", content = (toString e), url = "", id = -1 }
 
 
 initialModel : Model
@@ -54,4 +56,5 @@ initialModel =
     { stories = [ blankStory ]
     , requestStatus = { status = "init" }
     , feedToAdd = ""
+    , currentStory = 17
     }

@@ -33,6 +33,9 @@ update msg model =
         SetFeedToAdd feedUrl ->
             ( { model | feedToAdd = feedUrl }, Cmd.none )
 
+        NextStory ->
+            ( model, Cmd.none )
+
         Noop ->
             ( model, Cmd.none )
 
@@ -55,6 +58,7 @@ storyDecoder =
         |> optional "summary" JD.string ""
         |> optional "body" JD.string ""
         |> required "url" JD.string
+        |> required "id" JD.int
 
 
 feedAddEncoder : Model -> JE.Value
