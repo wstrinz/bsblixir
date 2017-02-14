@@ -36,24 +36,14 @@ update msg model =
         NextStory ->
             let
                 newCurr =
-                    case nextOrHead model.currentStory model.stories of
-                        Just sid ->
-                            sid
-
-                        Nothing ->
-                            -1
+                    nextOrHead model.currentStory model.stories
             in
                 ( { model | currentStory = newCurr }, Cmd.none )
 
         PrevStory ->
             let
                 newCurr =
-                    case nextOrHead model.currentStory (List.reverse model.stories) of
-                        Just sid ->
-                            sid
-
-                        Nothing ->
-                            -1
+                    nextOrHead model.currentStory (List.reverse model.stories)
             in
                 ( { model | currentStory = newCurr }, Cmd.none )
 

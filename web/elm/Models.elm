@@ -66,9 +66,19 @@ currStory model =
                 errStory "couldn't find currentStory"
 
 
-nextOrHead : Int -> List Story -> Maybe Int
-nextOrHead id =
-    Maybe.map .id << findNext id
+nextOrHead : Int -> List Story -> Int
+nextOrHead id storyList =
+    case Maybe.map .id <| findNext id storyList of
+        Just i ->
+            i
+
+        Nothing ->
+            case List.head storyList of
+                Just li ->
+                    li.id
+
+                Nothing ->
+                    -1
 
 
 findNext : Int -> List Story -> Maybe Story
