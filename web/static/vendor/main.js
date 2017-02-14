@@ -9442,7 +9442,7 @@ var _user$project$Views$controls = function (model) {
 				},
 				{
 					ctor: '::',
-					_0: _elm_lang$html$Html$text('load'),
+					_0: _elm_lang$html$Html$text('fetch'),
 					_1: {ctor: '[]'}
 				}),
 			_1: {
@@ -9640,7 +9640,7 @@ var _user$project$Views$view = function (model) {
 
 var _user$project$Main$main = _elm_lang$html$Html$program(
 	{
-		init: {ctor: '_Tuple2', _0: _user$project$Models$initialModel, _1: _elm_lang$core$Platform_Cmd$none},
+		init: {ctor: '_Tuple2', _0: _user$project$Models$initialModel, _1: _user$project$Updates$getStories},
 		view: _user$project$Views$view,
 		update: _user$project$Updates$update,
 		subscriptions: function (_p0) {
