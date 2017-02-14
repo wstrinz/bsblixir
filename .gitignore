@@ -26,3 +26,4 @@ erl_crash.dump
 # Elm things
 /web/elm/elm-stuff
 elm-stuff/
+/web/static/vendor/main.js
