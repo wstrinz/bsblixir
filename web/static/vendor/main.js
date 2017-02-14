@@ -9113,6 +9113,51 @@ var _elm_lang$http$Http$StringPart = F2(
 	});
 var _elm_lang$http$Http$stringPart = _elm_lang$http$Http$StringPart;
 
+var _user$project$Models$findNext = F2(
+	function (target, currList) {
+		findNext:
+		while (true) {
+			var t = _elm_lang$core$List$tail(currList);
+			var rest = function () {
+				var _p0 = t;
+				if (_p0.ctor === 'Nothing') {
+					return {ctor: '[]'};
+				} else {
+					return _p0._0;
+				}
+			}();
+			var currItem = _elm_lang$core$List$head(currList);
+			var _p1 = currItem;
+			if (_p1.ctor === 'Nothing') {
+				return currItem;
+			} else {
+				if (_elm_lang$core$Native_Utils.eq(_p1._0.id, target)) {
+					return _elm_lang$core$List$head(rest);
+				} else {
+					var _v2 = target,
+						_v3 = rest;
+					target = _v2;
+					currList = _v3;
+					continue findNext;
+				}
+			}
+		}
+	});
+var _user$project$Models$nextOrHead = F2(
+	function (target, stories) {
+		var firstStory = _elm_lang$core$List$head(stories);
+		var _p2 = A2(_user$project$Models$findNext, target, stories);
+		if (_p2.ctor === 'Just') {
+			return _p2._0.id;
+		} else {
+			var _p3 = firstStory;
+			if (_p3.ctor === 'Just') {
+				return _p3._0.id;
+			} else {
+				return -1;
+			}
+		}
+	});
 var _user$project$Models$errStory = function (e) {
 	return {
 		title: 'Something went wrong',
@@ -9122,6 +9167,21 @@ var _user$project$Models$errStory = function (e) {
 		url: '',
 		id: -1
 	};
+};
+var _user$project$Models$currStory = function (model) {
+	var matched = _elm_lang$core$List$head(
+		A2(
+			_elm_lang$core$List$filter,
+			function (s) {
+				return _elm_lang$core$Native_Utils.eq(model.currentStory, s.id);
+			},
+			model.stories));
+	var _p4 = matched;
+	if (_p4.ctor === 'Just') {
+		return _p4._0;
+	} else {
+		return _user$project$Models$errStory('couldn\'t find currentStory');
+	}
 };
 var _user$project$Models$blankStory = {title: 'A story', author: 'Me', summary: 'this is a summary', content: 'this is some story content', url: '#', id: -1};
 var _user$project$Models$initialModel = {
@@ -9260,64 +9320,19 @@ var _user$project$Updates$addFeed = function (model) {
 				_user$project$Updates$feedAddEncoder(model)),
 			_user$project$Updates$feedRespDecoder));
 };
-var _user$project$Updates$findNext = F2(
-	function (target, currList) {
-		findNext:
-		while (true) {
-			var t = _elm_lang$core$List$tail(currList);
-			var rest = function () {
-				var _p0 = t;
-				if (_p0.ctor === 'Nothing') {
-					return {ctor: '[]'};
-				} else {
-					return _p0._0;
-				}
-			}();
-			var currItem = _elm_lang$core$List$head(currList);
-			var _p1 = currItem;
-			if (_p1.ctor === 'Nothing') {
-				return currItem;
-			} else {
-				if (_elm_lang$core$Native_Utils.eq(_p1._0.id, target)) {
-					return _elm_lang$core$List$head(rest);
-				} else {
-					var _v2 = target,
-						_v3 = rest;
-					target = _v2;
-					currList = _v3;
-					continue findNext;
-				}
-			}
-		}
-	});
-var _user$project$Updates$nextOrHead = F2(
-	function (target, stories) {
-		var firstStory = _elm_lang$core$List$head(stories);
-		var _p2 = A2(_user$project$Updates$findNext, target, stories);
-		if (_p2.ctor === 'Just') {
-			return _p2._0.id;
-		} else {
-			var _p3 = firstStory;
-			if (_p3.ctor === 'Just') {
-				return _p3._0.id;
-			} else {
-				return -1;
-			}
-		}
-	});
 var _user$project$Updates$update = F2(
 	function (msg, model) {
-		var _p4 = msg;
-		switch (_p4.ctor) {
+		var _p0 = msg;
+		switch (_p0.ctor) {
 			case 'FetchStory':
 				return {ctor: '_Tuple2', _0: model, _1: _user$project$Updates$getStories};
 			case 'LoadStory':
-				if (_p4._0.ctor === 'Ok') {
+				if (_p0._0.ctor === 'Ok') {
 					return {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
 							model,
-							{stories: _p4._0._0}),
+							{stories: _p0._0._0}),
 						_1: _elm_lang$core$Platform_Cmd$none
 					};
 				} else {
@@ -9328,7 +9343,7 @@ var _user$project$Updates$update = F2(
 							{
 								stories: {
 									ctor: '::',
-									_0: _user$project$Models$errStory(_p4._0._0),
+									_0: _user$project$Models$errStory(_p0._0._0),
 									_1: {ctor: '[]'}
 								}
 							}),
@@ -9348,7 +9363,7 @@ var _user$project$Updates$update = F2(
 					_1: _user$project$Updates$addFeed(model)
 				};
 			case 'AddFeedResponse':
-				if (_p4._0.ctor === 'Ok') {
+				if (_p0._0.ctor === 'Ok') {
 					return {
 						ctor: '_Tuple2',
 						_0: _elm_lang$core$Native_Utils.update(
@@ -9368,7 +9383,7 @@ var _user$project$Updates$update = F2(
 									status: A2(
 										_elm_lang$core$Basics_ops['++'],
 										'failed to add feed! ',
-										_elm_lang$core$Basics$toString(_p4._0._0))
+										_elm_lang$core$Basics$toString(_p0._0._0))
 								}
 							}),
 						_1: _elm_lang$core$Platform_Cmd$none
@@ -9379,7 +9394,7 @@ var _user$project$Updates$update = F2(
 					ctor: '_Tuple2',
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
-						{feedToAdd: _p4._0}),
+						{feedToAdd: _p0._0}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
 			case 'NextStory':
@@ -9388,7 +9403,7 @@ var _user$project$Updates$update = F2(
 					_0: _elm_lang$core$Native_Utils.update(
 						model,
 						{
-							currentStory: A2(_user$project$Updates$nextOrHead, model.currentStory, model.stories)
+							currentStory: A2(_user$project$Models$nextOrHead, model.currentStory, model.stories)
 						}),
 					_1: _elm_lang$core$Platform_Cmd$none
 				};
@@ -9399,7 +9414,7 @@ var _user$project$Updates$update = F2(
 						model,
 						{
 							currentStory: A2(
-								_user$project$Updates$nextOrHead,
+								_user$project$Models$nextOrHead,
 								model.currentStory,
 								_elm_lang$core$List$reverse(model.stories))
 						}),
@@ -9584,6 +9599,15 @@ var _user$project$Views$storyDiv = F2(
 			});
 	});
 var _user$project$Views$view = function (model) {
+	var next = function () {
+		var _p0 = A2(_user$project$Models$findNext, model.currentStory, model.stories);
+		if (_p0.ctor === 'Just') {
+			return _p0._0;
+		} else {
+			return _user$project$Models$blankStory;
+		}
+	}();
+	var curr = _user$project$Models$currStory(model);
 	return A2(
 		_elm_lang$html$Html$div,
 		{ctor: '[]'},
@@ -9598,7 +9622,15 @@ var _user$project$Views$view = function (model) {
 					A2(
 						_elm_lang$core$List$map,
 						_user$project$Views$storyDiv(model),
-						model.stories)),
+						{
+							ctor: '::',
+							_0: curr,
+							_1: {
+								ctor: '::',
+								_0: next,
+								_1: {ctor: '[]'}
+							}
+						})),
 				_1: {ctor: '[]'}
 			}
 		});

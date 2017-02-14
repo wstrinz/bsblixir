@@ -4,7 +4,7 @@ import Http
 import Json.Decode as JD
 import Json.Decode.Pipeline exposing (decode, hardcoded, optional, required, requiredAt)
 import Json.Encode as JE
-import Models exposing (Feed, Model, Msg(..), Story, errStory)
+import Models exposing (Feed, Model, Msg(..), Story, errStory, currStory, nextOrHead)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -41,53 +41,6 @@ update msg model =
 
         Noop ->
             ( model, Cmd.none )
-
-
-nextOrHead : Int -> List Story -> Int
-nextOrHead target stories =
-    let
-        firstStory =
-            List.head stories
-    in
-        case findNext target stories of
-            Just s ->
-                s.id
-
-            Nothing ->
-                case firstStory of
-                    Just s ->
-                        s.id
-
-                    Nothing ->
-                        -1
-
-
-findNext : Int -> List Story -> Maybe Story
-findNext target currList =
-    let
-        currItem =
-            List.head currList
-
-        t =
-            List.tail currList
-
-        rest =
-            case t of
-                Nothing ->
-                    []
-
-                Just r ->
-                    r
-    in
-        case currItem of
-            Nothing ->
-                currItem
-
-            Just li ->
-                if li.id == target then
-                    List.head <| rest
-                else
-                    findNext target rest
 
 
 addFeed : Model -> Cmd Msg

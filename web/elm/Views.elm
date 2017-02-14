@@ -4,7 +4,7 @@ import Html exposing (div, text)
 import Html.Events exposing (onClick, onInput)
 import Html.Attributes exposing (href, style)
 import Json.Encode
-import Models exposing (Model, Story, Msg(..))
+import Models exposing (Model, Story, Msg(..), currStory, findNext)
 
 
 rawHtml : String -> Html.Attribute msg
@@ -46,7 +46,19 @@ storyDiv model story =
 
 view : Model -> Html.Html Msg
 view model =
-    div []
-        [ controls model
-        , div [] <| List.map (storyDiv model) model.stories
-        ]
+    let
+        curr =
+            currStory model
+
+        next =
+            case findNext model.currentStory model.stories of
+                Just s ->
+                    s
+
+                Nothing ->
+                    Models.blankStory
+    in
+        div []
+            [ controls model
+            , div [] <| List.map (storyDiv model) [ curr, next ]
+            ]
