@@ -9138,15 +9138,16 @@ var _user$project$Models$findNext = F2(
 			}
 		}
 	});
-var _user$project$Models$nextOrHead = F2(
-	function (target, storyList) {
+var _user$project$Models$nextOrHead = function (id) {
+	return function (_p2) {
 		return A2(
 			_elm_lang$core$Maybe$map,
 			function (_) {
 				return _.id;
 			},
-			A2(_user$project$Models$findNext, target, storyList));
-	});
+			A2(_user$project$Models$findNext, id, _p2));
+	};
+};
 var _user$project$Models$errStory = function (e) {
 	return {
 		title: 'Something went wrong',
@@ -9165,9 +9166,9 @@ var _user$project$Models$currStory = function (model) {
 				return _elm_lang$core$Native_Utils.eq(model.currentStory, s.id);
 			},
 			model.stories));
-	var _p2 = matched;
-	if (_p2.ctor === 'Just') {
-		return _p2._0;
+	var _p3 = matched;
+	if (_p3.ctor === 'Just') {
+		return _p3._0;
 	} else {
 		return _user$project$Models$errStory('couldn\'t find currentStory');
 	}

@@ -67,8 +67,8 @@ currStory model =
 
 
 nextOrHead : Int -> List Story -> Maybe Int
-nextOrHead target storyList =
-    Maybe.map .id <| findNext target storyList
+nextOrHead id =
+    Maybe.map .id << findNext id
 
 
 findNext : Int -> List Story -> Maybe Story
