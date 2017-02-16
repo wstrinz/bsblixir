@@ -7,6 +7,9 @@ import Json.Encode as JE
 import Models exposing (Feed, Model, Msg(..), Story, errStory, currStory, nextOrHead)
 
 
+-- import Debug exposing (log)
+
+
 update : Msg -> Model -> ( Model, Cmd Msg )
 update msg model =
     case msg of
@@ -14,7 +17,7 @@ update msg model =
             ( model, getStories )
 
         LoadStory (Ok storyData) ->
-            ( { model | stories = storyData, currentStory = currentOrFirstStory model storyData }
+            ( { model | stories = storyData, currentStory = currentOrFirstStory model (List.reverse storyData) }
             , Cmd.none
             )
 
@@ -36,14 +39,14 @@ update msg model =
         NextStory ->
             let
                 newCurr =
-                    nextOrHead model.currentStory model.stories
+                    nextOrHead model.currentStory (List.reverse model.stories)
             in
                 ( { model | currentStory = newCurr }, Cmd.none )
 
         PrevStory ->
             let
                 newCurr =
-                    nextOrHead model.currentStory (List.reverse model.stories)
+                    nextOrHead model.currentStory model.stories
             in
                 ( { model | currentStory = newCurr }, Cmd.none )
 
@@ -68,6 +71,7 @@ storyDecoder =
         |> required "author" JD.string
         |> optional "summary" JD.string ""
         |> optional "body" JD.string ""
+        |> required "updated" JD.string
         |> required "url" JD.string
         |> required "id" JD.int
 

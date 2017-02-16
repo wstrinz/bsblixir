@@ -8,6 +8,7 @@ type alias Story =
     , author : String
     , summary : String
     , content : String
+    , updated : String
     , url : String
     , id : Int
     }
@@ -44,12 +45,12 @@ type Msg
 
 blankStory : Story
 blankStory =
-    { title = "A story", author = "Me", summary = "this is a summary", content = "this is some story content", url = "#", id = -1 }
+    { title = "A story", author = "Me", summary = "this is a summary", content = "this is some story content", url = "#", id = -1, updated = "" }
 
 
 errStory : a -> Story
 errStory e =
-    { title = "Something went wrong", summary = (toString e), author = "Me", content = (toString e), url = "", id = -2 }
+    { title = "Something went wrong", summary = (toString e), author = "Me", content = (toString e), url = "", id = -2, updated = "" }
 
 
 currStory : Model -> Story

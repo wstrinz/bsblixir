@@ -39,6 +39,7 @@ storyDiv model story =
                 [ Html.a [ href story.url ] [ text story.title ]
                 ]
             , Html.h4 [] [ text story.author ]
+            , Html.p [] [ text story.updated ]
             , Html.p [ rawHtml story.summary ] []
             , Html.p [ rawHtml story.content ] []
             ]
@@ -51,7 +52,7 @@ view model =
             currStory model
 
         next =
-            case findNext model.currentStory model.stories of
+            case findNext model.currentStory (List.reverse model.stories) of
                 Just s ->
                     s
 
