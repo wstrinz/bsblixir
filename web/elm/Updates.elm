@@ -14,7 +14,7 @@ update msg model =
             ( model, getStories )
 
         LoadStory (Ok storyData) ->
-            ( { model | stories = storyData }
+            ( { model | stories = storyData, currentStory = currentOrFirstStory model storyData }
             , Cmd.none
             )
 
@@ -97,3 +97,13 @@ feedRespDecoder =
 storyListDecorder : JD.Decoder (List Story)
 storyListDecorder =
     JD.at [ "data" ] (JD.list storyDecoder)
+
+
+currentOrFirstStory : Model -> List Story -> Int
+currentOrFirstStory model stories =
+    case model.currentStory > 0 of
+        True ->
+            nextOrHead model.currentStory stories
+
+        False ->
+            model.currentStory

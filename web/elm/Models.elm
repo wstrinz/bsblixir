@@ -49,7 +49,7 @@ blankStory =
 
 errStory : a -> Story
 errStory e =
-    { title = "Something went wrong", summary = "this is a summary", author = "Me", content = (toString e), url = "", id = -1 }
+    { title = "Something went wrong", summary = (toString e), author = "Me", content = (toString e), url = "", id = -2 }
 
 
 currStory : Model -> Story
