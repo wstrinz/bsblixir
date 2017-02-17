@@ -9,6 +9,7 @@ defmodule BSB.Story do
     field :summary, :string
     field :body, :string
     field :url, :string
+    field :read, :boolean
     field :updated, Ecto.DateTime
 
     timestamps()
