@@ -1,8 +1,10 @@
 module Main exposing (..)
 
+import Char
 import Html
-import Updates exposing (update, getStories)
+import Keyboard
 import Models exposing (Model, Msg(..), initialModel)
+import Updates exposing (getStories, update)
 import Views exposing (view)
 
 
@@ -12,5 +14,18 @@ main =
         { init = ( initialModel, getStories )
         , view = view
         , update = update
-        , subscriptions = \_ -> Sub.none
+        , subscriptions = \_ -> Keyboard.presses actionForKeypress
         }
+
+
+actionForKeypress : Int -> Msg
+actionForKeypress code =
+    case Char.fromCode code of
+        'j' ->
+            NextStory
+
+        'k' ->
+            PrevStory
+
+        k ->
+            Debug.log (toString k) Noop

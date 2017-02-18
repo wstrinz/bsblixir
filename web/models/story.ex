@@ -20,8 +20,8 @@ defmodule BSB.Story do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:author, :title, :subtitle, :summary, :updated])
-    |> validate_required([:author, :title, :summary, :updated])
+    |> cast(params, [:author, :title, :subtitle, :summary, :updated, :body, :url, :read])
+    |> validate_required([:author, :title, :updated])
   end
 
   def story_for_url(url) do

@@ -1,4 +1,12 @@
 defmodule BSB.StoryFetcher do
+  def parsed_time(t) do
+    case Timex.parse(t, "{RFC822}") do
+      {:ok, parsed_time} -> parsed_time |> Ecto.DateTime.cast!
+      {:error, _} -> Nil
+    end
+
+  end
+
   def entry_to_story(entry) do
     %BSB.Story{
       author: entry.author,
@@ -7,7 +15,7 @@ defmodule BSB.StoryFetcher do
       summary: entry.description,
       body: entry.content,
       url: entry.id,
-      updated: Ecto.DateTime.utc()
+      updated: parsed_time(entry.updated)
     }
   end
 
@@ -18,7 +26,7 @@ defmodule BSB.StoryFetcher do
       summary: entry.description,
       body: entry.content,
       url: entry.id,
-      updated: Ecto.DateTime.utc()
+      updated: parsed_time(entry.updated)
     }
   end
 

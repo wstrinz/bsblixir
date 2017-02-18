@@ -52,7 +52,7 @@ view model =
             currStory model
 
         next =
-            case findNext model.currentStory (List.reverse model.stories) of
+            case findNext model.currentStory model.stories of
                 Just s ->
                     s
 

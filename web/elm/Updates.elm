@@ -1,13 +1,8 @@
 module Updates exposing (..)
 
 import Http
-import Json.Decode as JD
-import Json.Decode.Pipeline exposing (decode, hardcoded, optional, required, requiredAt)
-import Json.Encode as JE
-import Models exposing (Feed, Model, Msg(..), Story, errStory, currStory, nextOrHead)
-
-
--- import Debug exposing (log)
+import Models exposing (..)
+import Decoders exposing (..)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -17,7 +12,7 @@ update msg model =
             ( model, getStories )
 
         LoadStory (Ok storyData) ->
-            ( { model | stories = storyData, currentStory = currentOrFirstStory model (List.reverse storyData) }
+            ( { model | stories = storyData, currentStory = currentOrFirstStory model storyData }
             , Cmd.none
             )
 
@@ -39,14 +34,14 @@ update msg model =
         NextStory ->
             let
                 newCurr =
-                    nextOrHead model.currentStory (List.reverse model.stories)
+                    nextOrHead model.currentStory model.stories
             in
                 ( { model | currentStory = newCurr }, Cmd.none )
 
         PrevStory ->
             let
                 newCurr =
-                    nextOrHead model.currentStory model.stories
+                    nextOrHead model.currentStory (List.reverse model.stories)
             in
                 ( { model | currentStory = newCurr }, Cmd.none )
 
@@ -62,45 +57,6 @@ addFeed model =
 getStories : Cmd Msg
 getStories =
     Http.send LoadStory <| Http.get "/stories" storyListDecorder
-
-
-storyDecoder : JD.Decoder Story
-storyDecoder =
-    decode Story
-        |> required "title" JD.string
-        |> required "author" JD.string
-        |> optional "summary" JD.string ""
-        |> optional "body" JD.string ""
-        |> required "updated" JD.string
-        |> required "url" JD.string
-        |> required "id" JD.int
-
-
-feedAddEncoder : Model -> JE.Value
-feedAddEncoder model =
-    JE.object
-        [ ( "url", JE.string model.feedToAdd ) ]
-
-
-feedDecoder : JD.Decoder Feed
-feedDecoder =
-    decode Feed
-        |> required "title" JD.string
-        |> optional "description" JD.string ""
-        |> required "url" JD.string
-        |> required "feed_url" JD.string
-        |> required "updated" JD.string
-        |> required "id" JD.int
-
-
-feedRespDecoder : JD.Decoder Feed
-feedRespDecoder =
-    JD.at [ "data" ] feedDecoder
-
-
-storyListDecorder : JD.Decoder (List Story)
-storyListDecorder =
-    JD.at [ "data" ] (JD.list storyDecoder)
 
 
 currentOrFirstStory : Model -> List Story -> Int

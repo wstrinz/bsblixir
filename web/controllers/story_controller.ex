@@ -1,10 +1,13 @@
 defmodule BSB.StoryController do
-  use BSB.Web, :controller
+  import Ecto.Query, only: [from: 2]
 
+  use BSB.Web, :controller
   alias BSB.Story
 
   def index(conn, _params) do
-    stories = Repo.all(Story)
+    qry = from s in Story, select: s, order_by: [desc: :updated]
+    stories = Repo.all(qry)
+
     render(conn, "index.json", stories: stories)
   end
 
