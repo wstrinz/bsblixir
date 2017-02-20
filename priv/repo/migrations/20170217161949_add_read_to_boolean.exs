@@ -3,7 +3,7 @@ defmodule BSB.Repo.Migrations.AddReadToBoolean do
 
   def change do
     alter table(:stories) do
-      add :read, :boolean
+      add :read, :boolean, default: false
     end
   end
 end

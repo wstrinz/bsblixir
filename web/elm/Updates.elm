@@ -1,8 +1,9 @@
 module Updates exposing (..)
 
+import Decoders exposing (..)
 import Http
 import Models exposing (..)
-import Decoders exposing (..)
+import Task
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -31,6 +32,20 @@ update msg model =
         SetFeedToAdd feedUrl ->
             ( { model | feedToAdd = feedUrl }, Cmd.none )
 
+        UpdateStory story ->
+            ( { model | requestStatus = { status = "updating story " ++ (toString story) } }, updateStory story )
+
+        UpdateStoryResponse (Ok storyResp) ->
+            ( { model | requestStatus = { status = "updated story" } }, Cmd.none )
+
+        UpdateStoryResponse (Err storyResp) ->
+            ( { model | requestStatus = { status = "update story failed! " ++ (toString storyResp) } }, Cmd.none )
+
+        MarkStory story ->
+            ( model
+            , Task.perform UpdateStory (Task.succeed { story | read = True })
+            )
+
         NextStory ->
             let
                 newCurr =
@@ -57,6 +72,11 @@ addFeed model =
 getStories : Cmd Msg
 getStories =
     Http.send LoadStory <| Http.get "/stories" storyListDecorder
+
+
+updateStory : Story -> Cmd Msg
+updateStory story =
+    Http.send UpdateStoryResponse <| Http.post ("/stories/" ++ (toString story.id)) (Http.jsonBody (storyEncoder story)) storyRespDecoder
 
 
 currentOrFirstStory : Model -> List Story -> Int

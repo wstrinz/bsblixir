@@ -15,6 +15,7 @@ storyDecoder =
         |> optional "body" JD.string ""
         |> required "updated" JD.string
         |> required "url" JD.string
+        |> required "read" JD.bool
         |> required "id" JD.int
 
 
@@ -22,6 +23,18 @@ feedAddEncoder : Model -> JE.Value
 feedAddEncoder model =
     JE.object
         [ ( "url", JE.string model.feedToAdd ) ]
+
+
+storyEncoder : Story -> JE.Value
+storyEncoder story =
+    JE.object
+        [ ( "id", JE.int story.id )
+        , ( "story"
+          , JE.object
+                [ ( "read", JE.bool story.read )
+                ]
+          )
+        ]
 
 
 feedDecoder : JD.Decoder Feed
@@ -43,3 +56,8 @@ feedRespDecoder =
 storyListDecorder : JD.Decoder (List Story)
 storyListDecorder =
     JD.at [ "data" ] (JD.list storyDecoder)
+
+
+storyRespDecoder : JD.Decoder Story
+storyRespDecoder =
+    JD.at [ "data" ] storyDecoder

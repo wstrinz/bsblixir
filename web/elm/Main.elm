@@ -3,7 +3,7 @@ module Main exposing (..)
 import Char
 import Html
 import Keyboard
-import Models exposing (Model, Msg(..), initialModel)
+import Models exposing (Model, Msg(..), initialModel, currStory)
 import Updates exposing (getStories, update)
 import Views exposing (view)
 
@@ -14,18 +14,21 @@ main =
         { init = ( initialModel, getStories )
         , view = view
         , update = update
-        , subscriptions = \_ -> Keyboard.presses actionForKeypress
+        , subscriptions = \model -> Keyboard.presses (actionForKeypress model)
         }
 
 
-actionForKeypress : Int -> Msg
-actionForKeypress code =
+actionForKeypress : Model -> Int -> Msg
+actionForKeypress model code =
     case Char.fromCode code of
         'j' ->
             NextStory
 
         'k' ->
             PrevStory
+
+        'u' ->
+            MarkStory <| currStory model
 
         k ->
             Debug.log (toString k) Noop

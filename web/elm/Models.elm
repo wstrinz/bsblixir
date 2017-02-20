@@ -10,6 +10,7 @@ type alias Story =
     , content : String
     , updated : String
     , url : String
+    , read : Bool
     , id : Int
     }
 
@@ -41,16 +42,19 @@ type Msg
     | AddFeedResponse (Result Http.Error Feed)
     | NextStory
     | PrevStory
+    | UpdateStory Story
+    | UpdateStoryResponse (Result Http.Error Story)
+    | MarkStory Story
 
 
 blankStory : Story
 blankStory =
-    { title = "A story", author = "Me", summary = "this is a summary", content = "this is some story content", url = "#", id = -1, updated = "" }
+    { title = "A story", author = "Me", summary = "this is a summary", content = "this is some story content", url = "#", id = -1, updated = "", read = False }
 
 
 errStory : a -> Story
 errStory e =
-    { title = "Something went wrong", summary = (toString e), author = "Me", content = (toString e), url = "", id = -2, updated = "" }
+    { title = "Something went wrong", summary = (toString e), author = "Me", content = (toString e), url = "", id = -2, updated = "", read = False }
 
 
 currStory : Model -> Story

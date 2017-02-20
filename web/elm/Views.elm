@@ -33,10 +33,19 @@ storyDiv model story =
                 [ style [ ( "border", "2px solid #000" ) ] ]
             else
                 []
+
+        titleAttrs story =
+            case story.read of
+                True ->
+                    [ style [ ( "color", "#636363" ) ] ]
+
+                False ->
+                    [ style [] ]
     in
         div attrs
-            [ Html.h2 []
-                [ Html.a [ href story.url ] [ text story.title ]
+            [ Html.h2 (titleAttrs story)
+                [ Html.a [ href story.url, style [ ( "color", "inherit" ) ] ]
+                    [ text story.title ]
                 ]
             , Html.h4 [] [ text story.author ]
             , Html.p [] [ text story.updated ]
