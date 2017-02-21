@@ -7,6 +7,7 @@ defmodule BSB.Router do
     plug :fetch_flash
     plug :protect_from_forgery
     plug :put_secure_browser_headers
+    plug BSB.ClacksPlug
   end
 
   pipeline :api do
