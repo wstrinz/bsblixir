@@ -60,8 +60,17 @@ update msg model =
             in
                 ( { model | currentStory = newCurr }, Cmd.none )
 
+        ToggleControlPanel ->
+            ( { model | controlPanelVisible = not model.controlPanelVisible }, Cmd.none )
+
         Noop ->
             ( model, Cmd.none )
+
+
+
+-- insertOrUpdateStory : Model -> Story -> Model
+-- insertOrUpdateStory model story =
+--     model
 
 
 addFeed : Model -> Cmd Msg

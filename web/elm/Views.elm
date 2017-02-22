@@ -14,15 +14,22 @@ rawHtml str =
 
 controls : Model -> Html.Html Msg
 controls model =
-    div []
-        [ Html.button [ onClick FetchStory ] [ text "fetch" ]
-        , Html.br [] []
-        , Html.input [ onInput SetFeedToAdd ] []
-        , Html.button [ onClick AddFeed ] [ text "add" ]
-        , Html.p [] [ text model.requestStatus.status ]
-        , Html.button [ onClick PrevStory ] [ text "-" ]
-        , Html.button [ onClick NextStory ] [ text "+" ]
-        ]
+    case model.controlPanelVisible of
+        False ->
+            div [] [ Html.button [ onClick ToggleControlPanel ] [ text "Show Controls" ] ]
+
+        True ->
+            div []
+                [ Html.button [ onClick FetchStory ] [ text "fetch" ]
+                , Html.br [] []
+                , Html.input [ onInput SetFeedToAdd ] []
+                , Html.button [ onClick AddFeed ] [ text "add" ]
+                , Html.p [] [ text model.requestStatus.status ]
+                , Html.button [ onClick PrevStory ] [ text "-" ]
+                , Html.button [ onClick NextStory ] [ text "+" ]
+                , Html.br [] []
+                , Html.button [ onClick ToggleControlPanel ] [ text "Hide Controls" ]
+                ]
 
 
 storyDiv : Model -> Story -> Html.Html Msg

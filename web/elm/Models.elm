@@ -30,7 +30,7 @@ type alias RequestStatus =
 
 
 type alias Model =
-    { stories : List Story, requestStatus : RequestStatus, feedToAdd : String, currentStory : Int }
+    { stories : List Story, requestStatus : RequestStatus, feedToAdd : String, currentStory : Int, controlPanelVisible : Bool }
 
 
 type Msg
@@ -45,6 +45,7 @@ type Msg
     | UpdateStory Story
     | UpdateStoryResponse (Result Http.Error Story)
     | MarkStory Story
+    | ToggleControlPanel
 
 
 blankStory : Story
@@ -108,4 +109,5 @@ initialModel =
     , requestStatus = { status = "init" }
     , feedToAdd = ""
     , currentStory = 17
+    , controlPanelVisible = False
     }
