@@ -36,14 +36,14 @@ update msg model =
             ( { model | requestStatus = { status = "updating story " ++ (toString story) } }, updateStory story )
 
         UpdateStoryResponse (Ok storyResp) ->
-            ( { model | requestStatus = { status = "updated story" } }, Cmd.none )
+            ( { model | requestStatus = { status = "updated story" }, stories = updateStoryList storyResp model.stories }, Cmd.none )
 
         UpdateStoryResponse (Err storyResp) ->
             ( { model | requestStatus = { status = "update story failed! " ++ (toString storyResp) } }, Cmd.none )
 
         MarkStory story ->
             ( model
-            , Task.perform UpdateStory (Task.succeed { story | read = True })
+            , markStoryTask story (not story.read)
             )
 
         NextStory ->
@@ -67,10 +67,38 @@ update msg model =
             ( model, Cmd.none )
 
 
+markStoryTask : Story -> Bool -> Cmd Msg
+markStoryTask story readVal =
+    Task.perform UpdateStory (Task.succeed { story | read = readVal })
 
--- insertOrUpdateStory : Model -> Story -> Model
--- insertOrUpdateStory model story =
---     model
+
+updateIfMatches : Story -> Story -> Story
+updateIfMatches target current =
+    case target.id == current.id of
+        True ->
+            target
+
+        False ->
+            current
+
+
+updateStoryList : Story -> List Story -> List Story
+updateStoryList story storyList =
+    List.map (updateIfMatches story) storyList
+
+
+insertOrUpdateStory : Model -> Story -> Model
+insertOrUpdateStory model story =
+    let
+        storyInModel =
+            not <| (List.filter (\i -> i.id == story.id) model.stories) == []
+    in
+        case storyInModel of
+            True ->
+                { model | stories = updateStoryList story model.stories }
+
+            False ->
+                { model | stories = story :: model.stories }
 
 
 addFeed : Model -> Cmd Msg
