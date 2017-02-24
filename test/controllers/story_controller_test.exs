@@ -21,6 +21,7 @@ defmodule BSB.StoryControllerTest do
       "author" => story.author,
       "title" => story.title,
       "subtitle" => story.subtitle,
+      "read" => false,
       "body" => story.body,
       "url" => story.url,
       "summary" => story.summary,

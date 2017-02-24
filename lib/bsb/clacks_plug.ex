@@ -4,6 +4,6 @@ defmodule BSB.ClacksPlug do
   def init(default), do: default
 
   def call(conn, _default) do
-    put_resp_header(conn, "X-Clacks-Overhead", "GNU Terry Pratchett")
+    put_resp_header(conn, "x-clacks-overhead", "GNU Terry Pratchett")
   end
 end
