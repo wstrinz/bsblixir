@@ -72,6 +72,11 @@ currStory model =
                 errStory "couldn't find currentStory"
 
 
+storyForId : Int -> List Story -> Maybe Story
+storyForId targetId storyList =
+    List.head <| List.filter (\s -> s.id == targetId) storyList
+
+
 nextOrHead : Int -> List Story -> Int
 nextOrHead id storyList =
     case Maybe.map .id <| findNext id storyList of

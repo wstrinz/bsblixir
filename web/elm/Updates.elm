@@ -14,7 +14,7 @@ update msg model =
 
         LoadStory (Ok storyData) ->
             ( { model | stories = storyData, currentStory = currentOrFirstStory model storyData }
-            , Cmd.none
+            , markStoryTask (List.head storyData) True
             )
 
         LoadStory (Err e) ->
@@ -43,22 +43,28 @@ update msg model =
 
         MarkStory story ->
             ( model
-            , markStoryTask story (not story.read)
+            , markStoryTask (Just story) (not story.read)
             )
 
         NextStory ->
             let
-                newCurr =
+                newCurrId =
                     nextOrHead model.currentStory model.stories
+
+                newCurr =
+                    Models.storyForId newCurrId model.stories
             in
-                ( { model | currentStory = newCurr }, Cmd.none )
+                ( { model | currentStory = newCurrId }, markStoryTask newCurr True )
 
         PrevStory ->
             let
-                newCurr =
+                newCurrId =
                     nextOrHead model.currentStory (List.reverse model.stories)
+
+                newCurr =
+                    Models.storyForId newCurrId model.stories
             in
-                ( { model | currentStory = newCurr }, Cmd.none )
+                ( { model | currentStory = newCurrId }, Cmd.none )
 
         ToggleControlPanel ->
             ( { model | controlPanelVisible = not model.controlPanelVisible }, Cmd.none )
@@ -67,9 +73,14 @@ update msg model =
             ( model, Cmd.none )
 
 
-markStoryTask : Story -> Bool -> Cmd Msg
+markStoryTask : Maybe Story -> Bool -> Cmd Msg
 markStoryTask story readVal =
-    Task.perform UpdateStory (Task.succeed { story | read = readVal })
+    case story of
+        Nothing ->
+            Cmd.none
+
+        Just s ->
+            Task.perform UpdateStory (Task.succeed { s | read = readVal })
 
 
 updateIfMatches : Story -> Story -> Story
