@@ -35,11 +35,14 @@ controls model =
 storyDiv : Model -> Story -> Html.Html Msg
 storyDiv model story =
     let
+        baseStyle =
+            [ ( "padding", "10px" ) ]
+
         attrs =
             if model.currentStory == story.id then
-                [ style [ ( "border", "2px solid #000" ) ] ]
+                [ style <| List.append baseStyle [ ( "border", "2px solid #000" ) ] ]
             else
-                []
+                [ style baseStyle ]
 
         titleAttrs story =
             case story.read of
@@ -74,8 +77,16 @@ view model =
 
                 Nothing ->
                     Models.blankStory
+
+        afterNext =
+            case findNext next.id model.stories of
+                Just s ->
+                    s
+
+                Nothing ->
+                    Models.blankStory
     in
         div []
             [ controls model
-            , div [] <| List.map (storyDiv model) [ curr, next ]
+            , div [] <| List.map (storyDiv model) [ curr, next, afterNext ]
             ]
