@@ -30,5 +30,8 @@ actionForKeypress model code =
         'u' ->
             MarkStory <| currStory model
 
+        'o' ->
+            OpenStory <| currStory model
+
         k ->
             Debug.log (toString k) Noop

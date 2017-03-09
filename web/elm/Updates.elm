@@ -3,6 +3,7 @@ module Updates exposing (..)
 import Decoders exposing (..)
 import Http
 import Models exposing (..)
+import Ports
 import Task
 
 
@@ -68,6 +69,9 @@ update msg model =
 
         ToggleControlPanel ->
             ( { model | controlPanelVisible = not model.controlPanelVisible }, Cmd.none )
+
+        OpenStory story ->
+            ( model, Ports.openUrl story.url )
 
         Noop ->
             ( model, Cmd.none )

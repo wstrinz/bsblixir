@@ -21,3 +21,7 @@ import "phoenix_html"
 // import socket from "./socket"
 const elmDiv = document.getElementById('elm-main')
     , elmApp = Elm.Main.embed(elmDiv)
+
+elmApp.ports.openUrl.subscribe((url) => {
+  window.open(url)
+})
