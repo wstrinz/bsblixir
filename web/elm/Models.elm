@@ -30,7 +30,7 @@ type alias RequestStatus =
 
 
 type alias Model =
-    { stories : List Story, requestStatus : RequestStatus, feedToAdd : String, currentStory : Int, controlPanelVisible : Bool }
+    { stories : List Story, requestStatus : RequestStatus, feedToAdd : String, currentStory : Maybe Story, controlPanelVisible : Bool }
 
 
 type Msg
@@ -59,38 +59,19 @@ errStory e =
     { title = "Something went wrong", summary = (toString e), author = "Me", content = (toString e), url = "", id = -2, updated = "", read = False }
 
 
-currStory : Model -> Story
-currStory model =
-    let
-        matched =
-            List.head <| List.filter (\s -> model.currentStory == s.id) model.stories
-    in
-        case matched of
-            Just s ->
-                s
-
-            Nothing ->
-                errStory "couldn't find currentStory"
-
-
 storyForId : Int -> List Story -> Maybe Story
 storyForId targetId storyList =
     List.head <| List.filter (\s -> s.id == targetId) storyList
 
 
-nextOrHead : Int -> List Story -> Int
-nextOrHead id storyList =
-    case Maybe.map .id <| findNext id storyList of
-        Just i ->
-            i
+nextOrHead : Maybe Story -> List Story -> Maybe Story
+nextOrHead story storyList =
+    case story of
+        Just s ->
+            findNext s.id storyList
 
         Nothing ->
-            case List.head storyList of
-                Just li ->
-                    li.id
-
-                Nothing ->
-                    -1
+            List.head storyList
 
 
 findNext : Int -> List Story -> Maybe Story
@@ -114,6 +95,6 @@ initialModel =
     { stories = [ blankStory ]
     , requestStatus = { status = "init" }
     , feedToAdd = ""
-    , currentStory = 17
+    , currentStory = Nothing
     , controlPanelVisible = False
     }

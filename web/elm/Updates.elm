@@ -49,23 +49,17 @@ update msg model =
 
         NextStory ->
             let
-                newCurrId =
-                    nextOrHead model.currentStory model.stories
-
                 newCurr =
-                    Models.storyForId newCurrId model.stories
+                    nextOrHead model.currentStory model.stories
             in
-                ( { model | currentStory = newCurrId }, markStoryTask newCurr True )
+                ( { model | currentStory = newCurr }, markStoryTask newCurr True )
 
         PrevStory ->
             let
-                newCurrId =
-                    nextOrHead model.currentStory (List.reverse model.stories)
-
                 newCurr =
-                    Models.storyForId newCurrId model.stories
+                    nextOrHead model.currentStory (List.reverse model.stories)
             in
-                ( { model | currentStory = newCurrId }, Cmd.none )
+                ( { model | currentStory = newCurr }, Cmd.none )
 
         ToggleControlPanel ->
             ( { model | controlPanelVisible = not model.controlPanelVisible }, Cmd.none )
@@ -131,11 +125,11 @@ updateStory story =
     Http.send UpdateStoryResponse <| Http.post ("/stories/" ++ (toString story.id)) (Http.jsonBody (storyEncoder story)) storyRespDecoder
 
 
-currentOrFirstStory : Model -> List Story -> Int
+currentOrFirstStory : Model -> List Story -> Maybe Story
 currentOrFirstStory model stories =
-    case model.currentStory > 0 of
-        True ->
-            nextOrHead model.currentStory stories
-
-        False ->
+    case model.currentStory of
+        Just s ->
             model.currentStory
+
+        Nothing ->
+            nextOrHead model.currentStory stories

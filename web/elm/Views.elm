@@ -4,7 +4,7 @@ import Html exposing (div, text)
 import Html.Events exposing (onClick, onInput)
 import Html.Attributes exposing (href, style)
 import Json.Encode
-import Models exposing (Model, Story, Msg(..), currStory, findNext)
+import Models exposing (Model, Story, Msg(..), findNext)
 
 
 rawHtml : String -> Html.Attribute msg
@@ -39,7 +39,7 @@ storyDiv model story =
             [ ( "padding", "10px" ) ]
 
         attrs =
-            if model.currentStory == story.id then
+            if model.currentStory == story then
                 [ style <| List.append baseStyle [ ( "border", "2px solid #000" ) ] ]
             else
                 [ style baseStyle ]
@@ -68,7 +68,7 @@ view : Model -> Html.Html Msg
 view model =
     let
         curr =
-            currStory model
+            model.currentStory
 
         next =
             case findNext model.currentStory model.stories of
