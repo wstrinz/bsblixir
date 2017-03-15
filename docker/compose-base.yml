@@ -1,0 +1,48 @@
+version: "2.0"
+services:
+  shared:
+    image: alpine
+    command: /bin/sh -c "while true; do sleep 10; done"
+    stop_grace_period: 1s
+    stop_signal: SIGKILL
+    volumes:
+      - ..:/code
+      - /code/priv/static
+      - /code/deps
+      - /code/_build
+      - /code/node_modules
+      - /code/web/priv/static
+      - /code/web/elm/elm-stuff
+      - /code/elm-stuff
+
+  postgres:
+    image: "postgres:9.6"
+    environment:
+      POSTGRES_PASSWORD: postgres
+
+  elm:
+    build:
+      context: ..
+      dockerfile: "docker/elm.dockerfile"
+    command: |
+      /bin/bash -c "
+        while [ ! -f deps/phoenix/priv/static/phoenix.js ]; do
+          echo \"Waiting until phoenix is available...\"
+          sleep 2
+        done
+        npm install --no-progress
+        node node_modules/brunch/bin/brunch watch
+      "
+    stop_grace_period: 1s
+    stop_signal: SIGKILL
+
+  phoenix:
+    build:
+      context: ..
+      dockerfile: "docker/elixir.dockerfile"
+    working_dir: /code
+    stop_grace_period: 1s
+    stop_signal: SIGKILL
+    environment:
+      ERL_CRASH_DUMP_SECONDS: 0
+      PGHOST: postgres
