@@ -3,7 +3,7 @@ module Main exposing (..)
 import Char
 import Html
 import Keyboard
-import Models exposing (Model, Msg(..), initialModel, currStory)
+import Models exposing (Model, Msg(..), initialModel)
 import Updates exposing (getStories, update)
 import Views exposing (view)
 
@@ -28,10 +28,20 @@ actionForKeypress model code =
             PrevStory
 
         'u' ->
-            MarkStory <| currStory model
+            case model.currentStory of
+                Just s ->
+                    MarkStory <| s
+
+                Nothing ->
+                    Noop
 
         'o' ->
-            OpenStory <| currStory model
+            case model.currentStory of
+                Just s ->
+                    OpenStory <| s
+
+                Nothing ->
+                    Noop
 
         k ->
             Debug.log (toString k) Noop

@@ -68,26 +68,31 @@ nextOrHead : Maybe Story -> List Story -> Maybe Story
 nextOrHead story storyList =
     case story of
         Just s ->
-            findNext s.id storyList
+            findNext story storyList
 
         Nothing ->
             List.head storyList
 
 
-findNext : Int -> List Story -> Maybe Story
+findNext : Maybe Story -> List Story -> Maybe Story
 findNext target currList =
-    case currList of
-        [] ->
+    case target of
+        Nothing ->
             Nothing
 
-        hd :: [] ->
-            Nothing
+        Just targetStory ->
+            case currList of
+                [] ->
+                    Nothing
 
-        hd :: next :: tl ->
-            if hd.id == target then
-                Just next
-            else
-                findNext target <| next :: tl
+                hd :: [] ->
+                    Nothing
+
+                hd :: next :: tl ->
+                    if hd.id == targetStory.id then
+                        Just next
+                    else
+                        findNext target <| next :: tl
 
 
 initialModel : Model

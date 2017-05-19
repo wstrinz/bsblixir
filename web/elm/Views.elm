@@ -32,14 +32,14 @@ controls model =
                 ]
 
 
-storyDiv : Model -> Story -> Html.Html Msg
-storyDiv model story =
+storyDiv : Model -> Maybe Story -> Html.Html Msg
+storyDiv model maybeStory =
     let
         baseStyle =
             [ ( "padding", "10px" ) ]
 
         attrs =
-            if model.currentStory == story then
+            if model.currentStory == maybeStory then
                 [ style <| List.append baseStyle [ ( "border", "2px solid #000" ) ] ]
             else
                 [ style baseStyle ]
@@ -52,16 +52,21 @@ storyDiv model story =
                 False ->
                     [ style [] ]
     in
-        div attrs
-            [ Html.h2 (titleAttrs story)
-                [ Html.a [ href story.url, style [ ( "color", "inherit" ) ] ]
-                    [ text story.title ]
-                ]
-            , Html.h4 [] [ text story.author ]
-            , Html.p [] [ text story.updated ]
-            , Html.p [ rawHtml story.summary ] []
-            , Html.p [ rawHtml story.content ] []
-            ]
+        case maybeStory of
+            Nothing ->
+                div [] []
+
+            Just story ->
+                div attrs
+                    [ Html.h2 (titleAttrs story)
+                        [ Html.a [ href story.url, style [ ( "color", "inherit" ) ] ]
+                            [ text story.title ]
+                        ]
+                    , Html.h4 [] [ text story.author ]
+                    , Html.p [] [ text story.updated ]
+                    , Html.p [ rawHtml story.summary ] []
+                    , Html.p [ rawHtml story.content ] []
+                    ]
 
 
 view : Model -> Html.Html Msg
@@ -71,20 +76,10 @@ view model =
             model.currentStory
 
         next =
-            case findNext model.currentStory model.stories of
-                Just s ->
-                    s
-
-                Nothing ->
-                    Models.blankStory
+            findNext model.currentStory model.stories
 
         afterNext =
-            case findNext next.id model.stories of
-                Just s ->
-                    s
-
-                Nothing ->
-                    Models.blankStory
+            findNext next model.stories
     in
         div []
             [ controls model
