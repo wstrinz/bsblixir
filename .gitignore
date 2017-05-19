@@ -27,3 +27,6 @@ erl_crash.dump
 /web/elm/elm-stuff
 elm-stuff/
 /web/static/vendor/main.js
+
+# Elixir things
+*.beam
