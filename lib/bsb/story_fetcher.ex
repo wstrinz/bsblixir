@@ -1,8 +1,8 @@
 defmodule BSB.StoryFetcher do
   def parsed_time(t) do
     case Timex.parse(t, "{RFC822}") do
-      {:ok, parsed_time} -> parsed_time |> Ecto.DateTime.cast!
-      {:error, _} -> Nil
+      {:ok, parsed} -> parsed |> Ecto.DateTime.cast!
+      {:error, _} -> nil
     end
 
   end
@@ -26,7 +26,7 @@ defmodule BSB.StoryFetcher do
       summary: entry.description,
       body: entry.content,
       url: entry.id,
-      updated: parsed_time(entry.updated)
+      updated: entry.updated |> Ecto.DateTime.cast!
     }
   end
 
@@ -39,7 +39,13 @@ defmodule BSB.StoryFetcher do
   def get_entries_for(feed_url) do
     {:ok, %HTTPoison.Response{body: body}} = HTTPoison.get(feed_url)
     #  {:ok, feed, _} = FeederEx.parse(body)
-    ElixirFeedParser.parse(body).entries
+    case ElixirFeedParser.parse(body) do
+      {:ok, result} ->
+        result.entries
+      {:error, e} ->
+        IO.puts("error parsing feed #{feed_url}")
+        IO.inspect(e)
+    end
   end
 
   def save_or_update_story(new_story) do
@@ -57,9 +63,19 @@ defmodule BSB.StoryFetcher do
     end
   end
 
+  def remove_invalids(stories) do
+    {valid, invalid} = Enum.partition(stories, fn(ent) -> ent.updated != Nil end)
+    if !Enum.empty?(invalid) do
+      IO.puts("some invalid entries found!")
+      IO.inspect(Enum.at(invalid, 0))
+    end
+    valid
+  end
+
   def load_stories(url) do
     get_entries_for(url)
     |> Enum.map(&feedparser_entry_to_story/1)
+    |> remove_invalids
     |> Enum.map(&save_or_update_story/1)
   end
 

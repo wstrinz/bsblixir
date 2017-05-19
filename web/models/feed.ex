@@ -23,7 +23,10 @@ defmodule BSB.Feed do
   def feed_for_url(feed_url) do
     {:ok, %HTTPoison.Response{body: body}} = HTTPoison.get(feed_url)
     #  {:ok, feed, _} = FeederEx.parse(body)
-    ElixirFeedParser.parse(body)
+    case ElixirFeedParser.parse(body) do
+      {:ok, result} ->
+        result
+    end
   end
 
   def feedparser_feed_to_chgset(feed, feed_url) do
