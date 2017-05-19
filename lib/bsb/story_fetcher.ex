@@ -37,7 +37,7 @@ defmodule BSB.StoryFetcher do
   end
 
   def get_entries_for(feed_url) do
-    {:ok, %HTTPoison.Response{body: body}} = HTTPoison.get(feed_url)
+    {:ok, %HTTPoison.Response{body: body}} = HTTPoison.get(feed_url, [], follow_redirect: true)
     #  {:ok, feed, _} = FeederEx.parse(body)
     case ElixirFeedParser.parse(body) do
       {:ok, result} ->
