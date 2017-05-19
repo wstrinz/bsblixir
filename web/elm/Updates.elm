@@ -5,6 +5,7 @@ import Http
 import Models exposing (..)
 import Ports
 import Task
+import Dict as D exposing (Dict)
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -14,12 +15,12 @@ update msg model =
             ( model, getStories )
 
         LoadStory (Ok storyData) ->
-            ( { model | stories = storyData, currentStory = currentOrFirstStory model storyData }
+            ( { model | stories = (storyListToDict storyData), currentStory = currentOrFirstStory model storyData }
             , markStoryTask (List.head storyData) True
             )
 
         LoadStory (Err e) ->
-            ( { model | stories = [ errStory e ] }, Cmd.none )
+            ( { model | stories = D.singleton -1 (errStory e) }, Cmd.none )
 
         AddFeed ->
             ( { model | requestStatus = { status = "adding " ++ model.feedToAdd } }, addFeed model )
@@ -37,7 +38,11 @@ update msg model =
             ( { model | requestStatus = { status = "updating story " ++ (toString story) } }, updateStory story )
 
         UpdateStoryResponse (Ok storyResp) ->
-            ( { model | requestStatus = { status = "updated story" }, stories = updateStoryList storyResp model.stories }, Cmd.none )
+            let
+                updatedStories =
+                    updateStoryList storyResp model.stories
+            in
+                ( { model | requestStatus = { status = "updated story " ++ (toString storyResp) }, stories = updatedStories, currentStory = reloadCurrent updatedStories model.currentStory }, Cmd.none )
 
         UpdateStoryResponse (Err storyResp) ->
             ( { model | requestStatus = { status = "update story failed! " ++ (toString storyResp) } }, Cmd.none )
@@ -50,14 +55,14 @@ update msg model =
         NextStory ->
             let
                 newCurr =
-                    nextOrHead model.currentStory model.stories
+                    nextOrHead model.currentStory <| storyDictToList model.stories
             in
                 ( { model | currentStory = newCurr }, markStoryTask newCurr True )
 
         PrevStory ->
             let
                 newCurr =
-                    nextOrHead model.currentStory (List.reverse model.stories)
+                    nextOrHead model.currentStory (List.reverse <| storyDictToList model.stories)
             in
                 ( { model | currentStory = newCurr }, Cmd.none )
 
@@ -91,23 +96,14 @@ updateIfMatches target current =
             current
 
 
-updateStoryList : Story -> List Story -> List Story
-updateStoryList story storyList =
-    List.map (updateIfMatches story) storyList
+updateStoryList : Story -> StoryDict -> StoryDict
+updateStoryList story stories =
+    D.insert story.id story stories
 
 
 insertOrUpdateStory : Model -> Story -> Model
 insertOrUpdateStory model story =
-    let
-        storyInModel =
-            not <| (List.filter (\i -> i.id == story.id) model.stories) == []
-    in
-        case storyInModel of
-            True ->
-                { model | stories = updateStoryList story model.stories }
-
-            False ->
-                { model | stories = story :: model.stories }
+    { model | stories = D.insert story.id story model.stories }
 
 
 addFeed : Model -> Cmd Msg
@@ -133,3 +129,13 @@ currentOrFirstStory model stories =
 
         Nothing ->
             nextOrHead model.currentStory stories
+
+
+reloadCurrent : StoryDict -> Maybe Story -> Maybe Story
+reloadCurrent stories currentStory =
+    case currentStory of
+        Nothing ->
+            Nothing
+
+        Just s ->
+            D.get s.id stories

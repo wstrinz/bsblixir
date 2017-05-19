@@ -1,6 +1,7 @@
 module Models exposing (..)
 
 import Http
+import Dict as D
 
 
 type alias Story =
@@ -29,8 +30,12 @@ type alias RequestStatus =
     { status : String }
 
 
+type alias StoryDict =
+    D.Dict Int Story
+
+
 type alias Model =
-    { stories : List Story, requestStatus : RequestStatus, feedToAdd : String, currentStory : Maybe Story, controlPanelVisible : Bool }
+    { stories : StoryDict, requestStatus : RequestStatus, feedToAdd : String, currentStory : Maybe Story, controlPanelVisible : Bool }
 
 
 type Msg
@@ -95,9 +100,19 @@ findNext target currList =
                         findNext target <| next :: tl
 
 
+storyDictToList : StoryDict -> List Story
+storyDictToList stories =
+    List.map Tuple.second <| D.toList stories
+
+
+storyListToDict : List Story -> StoryDict
+storyListToDict stories =
+    D.fromList <| List.map (\s -> ( s.id, s )) stories
+
+
 initialModel : Model
 initialModel =
-    { stories = [ blankStory ]
+    { stories = D.fromList []
     , requestStatus = { status = "init" }
     , feedToAdd = ""
     , currentStory = Nothing

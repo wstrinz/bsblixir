@@ -4,7 +4,7 @@ import Html exposing (div, text)
 import Html.Events exposing (onClick, onInput)
 import Html.Attributes exposing (href, style)
 import Json.Encode
-import Models exposing (Model, Story, Msg(..), findNext)
+import Models exposing (Model, Story, Msg(..), findNext, storyDictToList)
 
 
 rawHtml : String -> Html.Attribute msg
@@ -54,7 +54,7 @@ storyDiv model maybeStory =
     in
         case maybeStory of
             Nothing ->
-                div [] []
+                div [] [ text ":( no story" ]
 
             Just story ->
                 div attrs
@@ -76,10 +76,10 @@ view model =
             model.currentStory
 
         next =
-            findNext model.currentStory model.stories
+            findNext model.currentStory <| storyDictToList model.stories
 
         afterNext =
-            findNext next model.stories
+            findNext next <| storyDictToList model.stories
     in
         div []
             [ controls model
