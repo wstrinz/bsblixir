@@ -19,7 +19,8 @@ defmodule BSB.Mixfile do
   def application do
     [mod: {BSB, []},
      applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :postgrex, :httpoison, :timex, :quantum]]
+                    :phoenix_ecto, :postgrex, :httpoison, :timex, :quantum],
+     extra_applications: [:edeliver]]
   end
 
   # Specifies which paths to compile per environment.
