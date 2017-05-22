@@ -14,10 +14,27 @@ use Mix.Config
 config :bsb, BSB.Endpoint,
   http: [port: {:system, "PORT"}],
   url: [host: "example.com", port: 80],
-  cache_static_manifest: "priv/static/manifest.json"
+  cache_static_manifest: "priv/static/manifest.json",
+  root: ".",
+  server: true,
+  version: Mix.Project.config[:version]
 
 # Do not print debug messages in production
 config :logger, level: :info
+
+config :bsb, BSB.Endpoint,
+  secret_key_base: System.get_env("SECRET_KEY_BASE")
+
+config :bsb, BSB.Repo,
+  adapter: Ecto.Adapters.Postgres,
+  username: System.get_env("DB_USERNAME"),
+  password: System.get_env("DB_PASSWORD"),
+  database: System.get_env("DB_DATABASE"),
+  hostname: System.get_env("DB_HOSTNAME"),
+  pool_size: 20
+
+# This line appears further down. Do not forget to uncomment it!
+config :phoenix, :serve_endpoints, true
 
 # ## SSL Support
 #

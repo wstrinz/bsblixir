@@ -18,8 +18,9 @@ defmodule BSB.Mixfile do
   # Type `mix help compile.app` for more information.
   def application do
     [mod: {BSB, []},
-     applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :logger, :gettext,
-                    :phoenix_ecto, :postgrex, :httpoison, :timex, :quantum]]
+     applications: [:phoenix, :phoenix_pubsub, :phoenix_html, :cowboy, :gettext,
+                    :phoenix_ecto, :postgrex, :httpoison, :timex, :quantum],
+     extra_applications: [:logger, :edeliver]]
   end
 
   # Specifies which paths to compile per environment.
@@ -44,6 +45,9 @@ defmodule BSB.Mixfile do
      {:gettext, "~> 0.11"},
      {:timex, "~> 3.0"},
      {:quantum, ">= 1.9.0"},
+     {:edeliver, "~> 1.4.2"},
+     {:distillery, "~> 1.3.5"},
+     {:carafe, "~> 0.1.1"},
      {:cowboy, "~> 1.0"}]
   end
 
