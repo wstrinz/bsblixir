@@ -54,7 +54,7 @@ storyDiv model maybeStory =
     in
         case maybeStory of
             Nothing ->
-                div [] [ text ":( no story -> miscchange" ]
+                div [] [ text ":( no story" ]
 
             Just story ->
                 div attrs
