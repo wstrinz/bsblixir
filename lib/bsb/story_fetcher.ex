@@ -19,11 +19,19 @@ defmodule BSB.StoryFetcher do
     }
   end
 
+  def story_author(%{author: author}) do
+    author
+  end
+
+  def story_author(%{authors: authors}) do
+    authors |> Enum.join(", ")
+  end
+
   def feedparser_entry_to_story(entry) do
     %BSB.Story{
-      author: entry.author,
+      author: story_author(entry),
       title: entry.title,
-      summary: entry.description,
+      summary: Map.get(entry, :description, ""),
       body: entry.content,
       url: entry.id,
       updated: entry.updated |> Ecto.DateTime.cast!
