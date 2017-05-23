@@ -102,7 +102,7 @@ findNext target currList =
 
 storyDictToList : StoryDict -> List Story
 storyDictToList stories =
-    List.map Tuple.second <| D.toList stories
+    List.reverse <| List.sortBy .updated <| List.map Tuple.second <| D.toList stories
 
 
 storyListToDict : List Story -> StoryDict

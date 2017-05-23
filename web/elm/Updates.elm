@@ -123,12 +123,16 @@ updateStory story =
 
 currentOrFirstStory : Model -> List Story -> Maybe Story
 currentOrFirstStory model stories =
-    case model.currentStory of
-        Just s ->
-            model.currentStory
+    let
+        sortedStories =
+            List.reverse <| List.sortBy .updated stories
+    in
+        case model.currentStory of
+            Just s ->
+                model.currentStory
 
-        Nothing ->
-            nextOrHead model.currentStory stories
+            Nothing ->
+                nextOrHead model.currentStory sortedStories
 
 
 reloadCurrent : StoryDict -> Maybe Story -> Maybe Story
