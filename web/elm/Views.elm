@@ -51,6 +51,14 @@ storyDiv model maybeStory =
 
                 False ->
                     [ style [] ]
+
+        displayContent story =
+            case story.content of
+                "" ->
+                    story.summary
+
+                _ ->
+                    story.content
     in
         case maybeStory of
             Nothing ->
@@ -64,8 +72,7 @@ storyDiv model maybeStory =
                         ]
                     , Html.h4 [] [ text story.author ]
                     , Html.p [] [ text story.updated ]
-                    , Html.p [ rawHtml story.summary ] []
-                    , Html.p [ rawHtml story.content ] []
+                    , Html.p [ rawHtml <| displayContent story ] []
                     ]
 
 
