@@ -38,6 +38,9 @@ storyDiv model maybeStory =
         baseStyle =
             [ ( "padding", "10px" ) ]
 
+        commonAttrs =
+            [ onClick <| SelectStory maybeStory ]
+
         attrs =
             if model.currentStory == maybeStory then
                 [ style <| List.append baseStyle [ ( "border", "2px solid #000" ) ] ]
@@ -65,7 +68,7 @@ storyDiv model maybeStory =
                 div [] [ text ":( no story" ]
 
             Just story ->
-                div attrs
+                div (List.concat [ commonAttrs, attrs ])
                     [ Html.h2 (titleAttrs story)
                         [ Html.a [ href story.url, style [ ( "color", "inherit" ) ] ]
                             [ text story.title ]

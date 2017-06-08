@@ -51,6 +51,7 @@ type Msg
     | UpdateStoryResponse (Result Http.Error Story)
     | MarkStory Story
     | ToggleControlPanel
+    | SelectStory (Maybe Story)
     | OpenStory Story
 
 

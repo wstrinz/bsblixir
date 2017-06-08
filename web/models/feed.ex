@@ -23,6 +23,7 @@ defmodule BSB.Feed do
   def feed_for_url(feed_url) do
     {:ok, %HTTPoison.Response{body: body}} = HTTPoison.get(feed_url, [], follow_redirect: true)
     #  {:ok, feed, _} = FeederEx.parse(body)
+    IO.inspect(body)
     case ElixirFeedParser.parse(body) do
       {:ok, result} ->
         result
