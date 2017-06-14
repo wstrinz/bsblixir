@@ -137,7 +137,7 @@ currentOrFirstStory : Model -> List Story -> Maybe Story
 currentOrFirstStory model stories =
     let
         sortedStories =
-            List.reverse <| List.sortBy .updated stories
+            List.reverse <| List.sortWith storySort stories
     in
         case model.currentStory of
             Just s ->

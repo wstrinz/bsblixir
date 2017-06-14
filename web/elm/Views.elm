@@ -74,7 +74,7 @@ storyDiv model maybeStory =
                             [ text story.title ]
                         ]
                     , Html.h4 [] [ text story.author ]
-                    , Html.p [] [ text story.updated ]
+                    , Html.p [] [ text <| story.updated ++ " (" ++ (toString story.score) ++ ")" ]
                     , Html.p [ rawHtml <| displayContent story ] []
                     ]
 

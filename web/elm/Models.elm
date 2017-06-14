@@ -12,6 +12,7 @@ type alias Story =
     , updated : String
     , url : String
     , read : Bool
+    , score : Float
     , id : Int
     }
 
@@ -57,12 +58,12 @@ type Msg
 
 blankStory : Story
 blankStory =
-    { title = "A story", author = "Me", summary = "this is a summary", content = "this is some story content", url = "#", id = -1, updated = "", read = False }
+    { title = "A story", author = "Me", summary = "this is a summary", content = "this is some story content", url = "#", id = -1, updated = "", read = False, score = 0 }
 
 
 errStory : a -> Story
 errStory e =
-    { title = "Something went wrong", summary = (toString e), author = "Me", content = (toString e), url = "", id = -2, updated = "", read = False }
+    { title = "Something went wrong", summary = (toString e), author = "Me", content = (toString e), url = "", id = -2, updated = "", read = False, score = 0 }
 
 
 storyForId : Int -> List Story -> Maybe Story
@@ -101,9 +102,17 @@ findNext target currList =
                         findNext target <| next :: tl
 
 
+storySort : Story -> Story -> Order
+storySort a b =
+    -- if a.score == b.score then
+    --     compare a.updated b.updated
+    -- else
+    compare a.score b.score
+
+
 storyDictToList : StoryDict -> List Story
 storyDictToList stories =
-    List.reverse <| List.sortBy .updated <| List.map Tuple.second <| D.toList stories
+    List.reverse <| List.sortWith storySort <| List.map Tuple.second <| D.toList stories
 
 
 storyListToDict : List Story -> StoryDict

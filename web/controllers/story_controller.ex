@@ -5,7 +5,7 @@ defmodule BSB.StoryController do
   alias BSB.Story
 
   def index(conn, _params) do
-    qry = from s in Story, select: s, order_by: [desc: :updated], where: s.read == false
+    qry = from s in Story, select: s, order_by: [desc: :score, desc: :updated], where: s.read == false
     stories = Repo.all(qry)
 
     render(conn, "index.json", stories: stories)

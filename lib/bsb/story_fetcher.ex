@@ -34,6 +34,7 @@ defmodule BSB.StoryFetcher do
       summary: Map.get(entry, :description, ""),
       body: entry.content,
       url: entry.id,
+      score: :rand.uniform(150) / 1,
       updated: entry.updated |> Ecto.DateTime.cast!
     }
   end

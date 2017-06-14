@@ -10,6 +10,7 @@ defmodule BSB.Story do
     field :body, :string
     field :url, :string
     field :read, :boolean
+    field :score, :float
     field :updated, Ecto.DateTime
 
     timestamps()
@@ -20,7 +21,7 @@ defmodule BSB.Story do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:author, :title, :subtitle, :summary, :updated, :body, :url, :read])
+    |> cast(params, [:author, :title, :subtitle, :summary, :updated, :body, :url, :read, :score])
     |> validate_required([:title, :updated])
   end
 

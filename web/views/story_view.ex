@@ -15,6 +15,7 @@ defmodule BSB.StoryView do
       title: story.title,
       subtitle: story.subtitle,
       summary: story.summary,
+      score: story.score,
       body: story.body,
       read: story.read,
       url: story.url,
