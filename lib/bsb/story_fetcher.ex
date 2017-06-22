@@ -34,7 +34,7 @@ defmodule BSB.StoryFetcher do
       summary: Map.get(entry, :description, ""),
       body: entry.content,
       url: entry.id,
-      score: :rand.uniform(150) / 1,
+      score: BSB.ScoreCalculator.calc_score_for_story(entry, feed),
       updated: entry.updated |> Ecto.DateTime.cast!,
       feed: feed
     }
@@ -58,17 +58,17 @@ defmodule BSB.StoryFetcher do
     end
   end
 
-  def save_or_update_story(new_story) do
+  def save_or_update_story(new_story, feed) do
     curr_story =
       BSB.Story.story_for_url(new_story.url)
       |> Enum.at(0)
 
     if curr_story do
-      %{new_story | id: curr_story.id}
+      %{new_story | id: curr_story.id, feed_id: feed.id}
       |> BSB.Story.changeset
       |> BSB.Repo.update!
     else
-      BSB.Story.changeset(new_story)
+      BSB.Story.changeset(%{new_story | feed_id: feed.id})
       |> BSB.Repo.insert!
     end
   end
@@ -82,11 +82,16 @@ defmodule BSB.StoryFetcher do
     valid
   end
 
+  def drop_if_invalid(%{"updated" => Nil}), do: Nil
+  def drop_if_invalid(story), do: story
+
   def load_stories(feed) do
-    get_entries_for(feed.url)
-    |> Enum.map(fn(s) -> feedparser_entry_to_story(s, feed) end)
-    |> remove_invalids
-    |> Enum.map(&save_or_update_story/1)
+    get_entries_for(feed.feed_url)
+    |> Enum.map(fn(s) -> s
+      |> feedparser_entry_to_story(feed)
+      |> drop_if_invalid
+      |> save_or_update_story(feed)
+     end)
   end
 
 end

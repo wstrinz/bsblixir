@@ -84,6 +84,9 @@ update msg model =
                     Just story ->
                         ( { model | currentStory = Just story }, markStoryTask (Just story) True )
 
+            SetView view ->
+                ( { model | currentView = view }, Cmd.none )
+
             Noop ->
                 ( model, Cmd.none )
 

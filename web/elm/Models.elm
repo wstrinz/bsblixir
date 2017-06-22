@@ -36,7 +36,18 @@ type alias StoryDict =
 
 
 type alias Model =
-    { stories : StoryDict, requestStatus : RequestStatus, feedToAdd : String, currentStory : Maybe Story, controlPanelVisible : Bool }
+    { stories : StoryDict
+    , requestStatus : RequestStatus
+    , feedToAdd : String
+    , currentStory : Maybe Story
+    , controlPanelVisible : Bool
+    , currentView : View
+    }
+
+
+type View
+    = StoryView
+    | FeedView Feed
 
 
 type Msg
@@ -52,6 +63,7 @@ type Msg
     | UpdateStoryResponse (Result Http.Error Story)
     | MarkStory Story
     | ToggleControlPanel
+    | SetView View
     | SelectStory (Maybe Story)
     | OpenStory Story
 
@@ -126,5 +138,6 @@ initialModel =
     , requestStatus = { status = "init" }
     , feedToAdd = ""
     , currentStory = Nothing
+    , currentView = StoryView
     , controlPanelVisible = False
     }

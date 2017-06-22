@@ -23,7 +23,7 @@ defmodule BSB.Story do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:author, :title, :subtitle, :summary, :updated, :body, :url, :read, :score])
+    |> cast(params, [:author, :title, :subtitle, :summary, :updated, :body, :url, :read, :score, :feed_id])
     |> validate_required([:title, :updated, :feed_id])
   end
 

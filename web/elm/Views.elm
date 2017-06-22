@@ -79,8 +79,8 @@ storyDiv model maybeStory =
                     ]
 
 
-view : Model -> Html.Html Msg
-view model =
+storyView : Model -> Html.Html Msg
+storyView model =
     let
         curr =
             model.currentStory
@@ -95,3 +95,8 @@ view model =
             [ controls model
             , div [] <| List.map (storyDiv model) [ curr, next, afterNext ]
             ]
+
+
+view : Model -> Html.Html Msg
+view model =
+    storyView model

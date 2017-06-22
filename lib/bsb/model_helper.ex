@@ -8,7 +8,7 @@ defmodule BSB.ModelHelper do
       end
 
       def update(instance, changes) do
-        BSB.Repo.update!(__MODULE__.changeset(Map.merge(instance, changes)))
+        BSB.Repo.update!(__MODULE__.changeset(instance, changes))
       end
     end               # <--
   end
