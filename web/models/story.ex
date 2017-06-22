@@ -1,5 +1,6 @@
 defmodule BSB.Story do
   use BSB.Web, :model
+  use BSB.ModelHelper, :first
   import Ecto.Query, only: [from: 2]
 
   schema "stories" do
@@ -12,6 +13,7 @@ defmodule BSB.Story do
     field :read, :boolean
     field :score, :float
     field :updated, Ecto.DateTime
+    belongs_to(:feed, BSB.Feed)
 
     timestamps()
   end
@@ -22,7 +24,7 @@ defmodule BSB.Story do
   def changeset(struct, params \\ %{}) do
     struct
     |> cast(params, [:author, :title, :subtitle, :summary, :updated, :body, :url, :read, :score])
-    |> validate_required([:title, :updated])
+    |> validate_required([:title, :updated, :feed_id])
   end
 
   def story_for_url(url) do

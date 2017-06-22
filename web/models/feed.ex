@@ -1,4 +1,5 @@
 defmodule BSB.Feed do
+  use BSB.ModelHelper, :first
   use BSB.Web, :model
 
   schema "feeds" do
@@ -7,17 +8,24 @@ defmodule BSB.Feed do
     field :url, :string
     field :feed_url, :string
     field :updated, Ecto.DateTime
+    field :base_score, :float
+    field :decay_per_hour, :float
+    has_many :stories, BSB.Story
 
     timestamps()
   end
+
+  # def first do
+  #   first()
+  # end
 
   @doc """
   Builds a changeset based on the `struct` and `params`.
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:title, :description, :url, :feed_url, :updated])
-    |> validate_required([:title, :description, :url, :feed_url, :updated])
+    |> cast(params, [:title, :description, :url, :feed_url, :updated, :decay_per_hour, :base_score])
+    |> validate_required([:title, :url, :feed_url, :updated])
   end
 
   def feed_for_url(feed_url) do
@@ -51,11 +59,17 @@ defmodule BSB.Feed do
   end
 
   def update_feed(feed) do
-    BSB.StoryFetcher.load_stories(feed.feed_url)
+    BSB.StoryFetcher.load_stories(feed)
   end
 
   def update_feeds do
     BSB.Repo.all(BSB.Feed)
     |> Enum.map(&update_feed/1)
+  end
+
+  def seed do
+    ["http://feeds.feedburner.com/RockPaperShotgun"]
+    |> Enum.map(&add_feed/1)
+    |> Enum.map(fn({:ok, f}) -> update_feed(f) end)
   end
 end

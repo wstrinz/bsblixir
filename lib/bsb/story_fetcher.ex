@@ -27,7 +27,7 @@ defmodule BSB.StoryFetcher do
     authors |> Enum.join(", ")
   end
 
-  def feedparser_entry_to_story(entry) do
+  def feedparser_entry_to_story(entry, feed) do
     %BSB.Story{
       author: story_author(entry),
       title: entry.title,
@@ -35,15 +35,16 @@ defmodule BSB.StoryFetcher do
       body: entry.content,
       url: entry.id,
       score: :rand.uniform(150) / 1,
-      updated: entry.updated |> Ecto.DateTime.cast!
+      updated: entry.updated |> Ecto.DateTime.cast!,
+      feed: feed
     }
   end
 
-  def first_story_for_feed(url) do
-    get_entries_for(url)
-    |> Enum.at(0)
-    |> feedparser_entry_to_story
-  end
+  # def first_story_for_feed(url) do
+  #   get_entries_for(url)
+  #   |> Enum.at(0)
+  #   |> feedparser_entry_to_story
+  # end
 
   def get_entries_for(feed_url) do
     {:ok, %HTTPoison.Response{body: body}} = HTTPoison.get(feed_url, [], follow_redirect: true)
@@ -81,9 +82,9 @@ defmodule BSB.StoryFetcher do
     valid
   end
 
-  def load_stories(url) do
-    get_entries_for(url)
-    |> Enum.map(&feedparser_entry_to_story/1)
+  def load_stories(feed) do
+    get_entries_for(feed.url)
+    |> Enum.map(fn(s) -> feedparser_entry_to_story(s, feed) end)
     |> remove_invalids
     |> Enum.map(&save_or_update_story/1)
   end
