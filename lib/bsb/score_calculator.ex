@@ -15,7 +15,6 @@ defmodule BSB.ScoreCalculator do
     hrs_ago =
       Timex.diff(Timex.now(), converted_time, :hours)
 
-
     feed.base_score * :math.pow(1 - feed.decay_per_hour, hrs_ago)
     |> Float.round(2)
   end

@@ -3,8 +3,8 @@ defmodule BSB.Mixfile do
 
   def project do
     [app: :bsb,
-     version: "0.0.9",
-     elixir: "~> 1.2",
+     version: "0.0.10",
+     elixir: "~> 1.4.5",
      elixirc_paths: elixirc_paths(Mix.env),
      compilers: [:phoenix, :gettext] ++ Mix.compilers,
      build_embedded: Mix.env == :prod,

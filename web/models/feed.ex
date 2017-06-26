@@ -44,6 +44,8 @@ defmodule BSB.Feed do
       description: feed.description,
       url: feed.url,
       feed_url: feed_url,
+      base_score: 0.0,
+      decay_per_hour: 0.0,
       updated: Ecto.DateTime.utc()
     }
   end
