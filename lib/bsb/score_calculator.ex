@@ -1,6 +1,6 @@
 defmodule BSB.ScoreCalculator do
   alias BSB.Repo
-  alias BSB.Feed
+  # alias BSB.Feed
   alias BSB.Story
   import Ecto.Query, only: [from: 2]
 
@@ -24,7 +24,7 @@ defmodule BSB.ScoreCalculator do
   end
 
   def recalculate_scores do
-      Repo.all(from s in Story, preload: [:feed])
+      Repo.all(from s in Story, where: s.read == false, preload: [:feed])
       |> Enum.map(fn(s) -> s
          |> calc_score_for_story(s.feed)
          |> story_change_score(s)

@@ -44,8 +44,8 @@ defmodule BSB.Feed do
       description: feed.description,
       url: feed.url,
       feed_url: feed_url,
-      base_score: 0.0,
-      decay_per_hour: 0.0,
+      base_score: 100.0,
+      decay_per_hour: 0.01,
       updated: Ecto.DateTime.utc()
     }
   end
@@ -70,7 +70,7 @@ defmodule BSB.Feed do
   end
 
   def seed do
-    ["http://feeds.feedburner.com/RockPaperShotgun"]
+    ["http://feeds.feedburner.com/RockPaperShotgun", "https://hnrss.org/frontpage?points=50"]
     |> Enum.map(&add_feed/1)
     |> Enum.map(fn({:ok, f}) -> update_feed(f) end)
   end

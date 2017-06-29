@@ -25,7 +25,8 @@ config :logger, :console,
 
 config :quantum, :bsb,
   cron: [
-    "*/15 * * * *": {BSB.Feed, :update_feeds}
+    "*/15 * * * *": {BSB.Feed, :update_feeds},
+    "@hourly": {BSB.ScoreCalculator, :recalculate_scores}
   ]
 
 # Import environment specific config. This must remain at the bottom
