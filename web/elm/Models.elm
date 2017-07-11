@@ -137,10 +137,15 @@ findRest target currList =
 
 storySort : Story -> Story -> Order
 storySort a b =
-    -- if a.score == b.score then
-    --     compare a.updated b.updated
-    -- else
-    compare a.score b.score
+    case compare a.score b.score of
+        GT ->
+            GT
+
+        LT ->
+            LT
+
+        EQ ->
+            compare a.id b.id
 
 
 storyDictToList : StoryDict -> List Story
