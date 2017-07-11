@@ -114,6 +114,27 @@ findNext target currList =
                         findNext target <| next :: tl
 
 
+findRest : Maybe Story -> List Story -> List Story
+findRest target currList =
+    case target of
+        Nothing ->
+            []
+
+        Just targetStory ->
+            case currList of
+                [] ->
+                    []
+
+                hd :: [] ->
+                    currList
+
+                hd :: next :: tl ->
+                    if hd.id == targetStory.id then
+                        next :: tl
+                    else
+                        findRest target <| next :: tl
+
+
 storySort : Story -> Story -> Order
 storySort a b =
     -- if a.score == b.score then
