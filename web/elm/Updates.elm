@@ -90,6 +90,9 @@ update msg model =
             Noop ->
                 ( model, Cmd.none )
 
+            SetStoryDisplayType newType ->
+                ( { model | storyDisplayType = newType }, Cmd.none )
+
 
 markStoryTask : Maybe Story -> Bool -> Cmd Msg
 markStoryTask story readVal =
