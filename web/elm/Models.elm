@@ -2,6 +2,8 @@ module Models exposing (..)
 
 import Http
 import Dict as D
+import List.Extra exposing (dropWhile)
+import Maybe exposing (withDefault)
 
 
 type alias Story =
@@ -42,12 +44,18 @@ type alias Model =
     , currentStory : Maybe Story
     , controlPanelVisible : Bool
     , currentView : View
+    , storyDisplayType : StoryDisplayType
     }
 
 
 type View
     = StoryView
     | FeedView Feed
+
+
+type StoryDisplayType
+    = Full
+    | Titles
 
 
 type Msg
@@ -66,6 +74,7 @@ type Msg
     | SetView View
     | SelectStory (Maybe Story)
     | OpenStory Story
+    | SetStoryDisplayType StoryDisplayType
 
 
 blankStory : Story
@@ -117,22 +126,34 @@ findNext target currList =
 findRest : Maybe Story -> List Story -> List Story
 findRest target currList =
     case target of
+        Just targetStory ->
+            currList
+                |> dropWhile (\s -> not <| s.id == targetStory.id)
+                |> List.tail
+                |> withDefault []
+
         Nothing ->
             []
 
-        Just targetStory ->
-            case currList of
-                [] ->
-                    []
 
-                hd :: [] ->
-                    currList
 
-                hd :: next :: tl ->
-                    if hd.id == targetStory.id then
-                        next :: tl
-                    else
-                        findRest target <| next :: tl
+-- case target of
+--     Nothing ->
+--         []
+--
+--     Just targetStory ->
+--         case currList of
+--             [] ->
+--                 []
+--
+--             hd :: [] ->
+--                 currList
+--
+--             hd :: next :: tl ->
+--                 if hd.id == targetStory.id then
+--                     next :: tl
+--                 else
+--                     findRest target <| next :: tl
 
 
 storySort : Story -> Story -> Order
@@ -161,4 +182,5 @@ initialModel =
     , currentStory = Nothing
     , currentView = StoryView
     , controlPanelVisible = False
+    , storyDisplayType = Full
     }

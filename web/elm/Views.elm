@@ -32,23 +32,23 @@ controls model =
                 ]
 
 
-storyDiv : Model -> Maybe Story -> Html.Html Msg
-storyDiv model maybeStory =
+storyDiv : Model -> Story -> Html.Html Msg
+storyDiv model story =
     let
         baseStyle =
             [ ( "padding", "10px" ) ]
 
         commonAttrs =
-            [ onClick <| SelectStory maybeStory ]
+            [ onClick <| SelectStory <| Just story ]
 
         attrs =
-            if model.currentStory == maybeStory then
+            if model.currentStory == Just story then
                 [ style <| List.append baseStyle [ ( "border", "2px solid #000" ) ] ]
             else
                 [ style baseStyle ]
 
-        titleAttrs story =
-            case story.read of
+        titleAttrs s =
+            case s.read of
                 True ->
                     [ style [ ( "color", "#636363" ) ] ]
 
@@ -63,20 +63,15 @@ storyDiv model maybeStory =
                 _ ->
                     story.content
     in
-        case maybeStory of
-            Nothing ->
-                div [] [ text ":( no story" ]
-
-            Just story ->
-                div (List.concat [ commonAttrs, attrs ])
-                    [ Html.h2 (titleAttrs story)
-                        [ Html.a [ href story.url, style [ ( "color", "inherit" ) ] ]
-                            [ text story.title ]
-                        ]
-                    , Html.h4 [] [ text story.author ]
-                    , Html.p [] [ text <| story.updated ++ " (" ++ (toString story.score) ++ ")" ]
-                    , Html.p [ rawHtml <| displayContent story ] []
-                    ]
+        div (List.concat [ commonAttrs, attrs ])
+            [ Html.h2 (titleAttrs story)
+                [ Html.a [ href story.url, style [ ( "color", "inherit" ) ] ]
+                    [ text story.title ]
+                ]
+            , Html.h4 [] [ text story.author ]
+            , Html.p [] [ text <| story.updated ++ " (" ++ (toString story.score) ++ ")" ]
+            , Html.p [ rawHtml <| displayContent story ] []
+            ]
 
 
 storyView : Model -> Html.Html Msg
@@ -85,16 +80,16 @@ storyView model =
         curr =
             model.currentStory
 
+        restStories =
+            storyDictToList model.stories |> findRest curr |> List.take 5
+
         shownStories =
-            case findRest curr <| storyDictToList model.stories of
-                next :: afterNext :: rest ->
-                    [ curr, Just next, Just afterNext ]
+            case curr of
+                Just s ->
+                    s :: restStories
 
-                next :: [] ->
-                    [ curr, Just next ]
-
-                [] ->
-                    [ curr ]
+                Nothing ->
+                    restStories
     in
         div []
             [ controls model
