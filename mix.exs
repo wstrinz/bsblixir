@@ -3,7 +3,7 @@ defmodule BSB.Mixfile do
 
   def project do
     [app: :bsb,
-     version: "0.0.14",
+     version:  "0.0.#{committed_at()}",
      elixir: "~> 1.4.5",
      elixirc_paths: elixirc_paths(Mix.env),
      compilers: [:phoenix, :gettext] ++ Mix.compilers,
@@ -11,6 +11,10 @@ defmodule BSB.Mixfile do
      start_permanent: Mix.env == :prod,
      aliases: aliases(),
      deps: deps()]
+  end
+
+  defp committed_at do
+    System.cmd("git", ~w[log -1 --date=short --pretty=format:%ct]) |> elem(0)
   end
 
   # Configuration for the OTP application.
@@ -59,4 +63,5 @@ defmodule BSB.Mixfile do
      "ecto.reset": ["ecto.drop", "ecto.setup"],
      "test": ["ecto.create --quiet", "ecto.migrate", "test"]]
   end
+
 end
