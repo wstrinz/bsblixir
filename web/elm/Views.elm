@@ -62,6 +62,14 @@ storyDiv model story =
 
                 _ ->
                     story.content
+
+        contentArea =
+            case model.storyDisplayType of
+                Full ->
+                    [ rawHtml <| displayContent story ]
+
+                Titles ->
+                    []
     in
         div (List.concat [ commonAttrs, attrs ])
             [ Html.h2 (titleAttrs story)
@@ -70,46 +78,7 @@ storyDiv model story =
                 ]
             , Html.h4 [] [ text story.author ]
             , Html.p [] [ text <| story.updated ++ " (" ++ (toString story.score) ++ ")" ]
-            , Html.p [ rawHtml <| displayContent story ] []
-            ]
-
-
-compressedStoryDiv : Model -> Story -> Html.Html Msg
-compressedStoryDiv model story =
-    let
-        baseStyle =
-            [ ( "padding", "10px" ) ]
-
-        commonAttrs =
-            [ onClick <| SelectStory <| Just story ]
-
-        attrs =
-            if model.currentStory == Just story then
-                [ style <| List.append baseStyle [ ( "border", "2px solid #000" ) ] ]
-            else
-                [ style baseStyle ]
-
-        titleAttrs s =
-            case s.read of
-                True ->
-                    [ style [ ( "color", "#636363" ) ] ]
-
-                False ->
-                    [ style [] ]
-
-        displayContent story =
-            case story.content of
-                "" ->
-                    story.summary
-
-                _ ->
-                    story.content
-    in
-        div (List.concat [ commonAttrs, attrs ])
-            [ Html.h2 (titleAttrs story)
-                [ Html.a [ href story.url, style [ ( "color", "inherit" ) ] ]
-                    [ text story.title ]
-                ]
+            , Html.p contentArea []
             ]
 
 
@@ -129,18 +98,10 @@ storyView model =
 
                 Nothing ->
                     restStories
-
-        dispFn =
-            case model.storyDisplayType of
-                Full ->
-                    storyDiv
-
-                Titles ->
-                    compressedStoryDiv
     in
         div []
             [ controls model
-            , div [] <| List.map (dispFn model) shownStories
+            , div [] <| List.map (storyDiv model) shownStories
             ]
 
 
