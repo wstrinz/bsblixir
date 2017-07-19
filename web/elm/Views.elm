@@ -4,7 +4,7 @@ import Html exposing (div, text)
 import Html.Events exposing (onClick, onInput)
 import Html.Attributes exposing (href, style)
 import Json.Encode
-import Models exposing (Model, Story, Msg(..), findNext, findRest, storyDictToList)
+import Models exposing (Model, Story, Msg(..), StoryDisplayType(..), findNext, findRest, storyDictToList)
 
 
 rawHtml : String -> Html.Attribute msg
@@ -74,6 +74,45 @@ storyDiv model story =
             ]
 
 
+compressedStoryDiv : Model -> Story -> Html.Html Msg
+compressedStoryDiv model story =
+    let
+        baseStyle =
+            [ ( "padding", "10px" ) ]
+
+        commonAttrs =
+            [ onClick <| SelectStory <| Just story ]
+
+        attrs =
+            if model.currentStory == Just story then
+                [ style <| List.append baseStyle [ ( "border", "2px solid #000" ) ] ]
+            else
+                [ style baseStyle ]
+
+        titleAttrs s =
+            case s.read of
+                True ->
+                    [ style [ ( "color", "#636363" ) ] ]
+
+                False ->
+                    [ style [] ]
+
+        displayContent story =
+            case story.content of
+                "" ->
+                    story.summary
+
+                _ ->
+                    story.content
+    in
+        div (List.concat [ commonAttrs, attrs ])
+            [ Html.h2 (titleAttrs story)
+                [ Html.a [ href story.url, style [ ( "color", "inherit" ) ] ]
+                    [ text story.title ]
+                ]
+            ]
+
+
 storyView : Model -> Html.Html Msg
 storyView model =
     let
@@ -81,7 +120,7 @@ storyView model =
             model.currentStory
 
         restStories =
-            storyDictToList model.stories |> findRest curr |> List.take 5
+            storyDictToList model.stories |> findRest curr |> List.take 20
 
         shownStories =
             case curr of
@@ -90,10 +129,18 @@ storyView model =
 
                 Nothing ->
                     restStories
+
+        dispFn =
+            case model.storyDisplayType of
+                Full ->
+                    storyDiv
+
+                Titles ->
+                    compressedStoryDiv
     in
         div []
             [ controls model
-            , div [] <| List.map (storyDiv model) shownStories
+            , div [] <| List.map (dispFn model) shownStories
             ]
 
 

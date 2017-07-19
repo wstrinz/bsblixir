@@ -3,7 +3,7 @@ module Main exposing (..)
 import Char
 import Html
 import Keyboard
-import Models exposing (Model, Msg(..), initialModel)
+import Models exposing (Model, Msg(..), initialModel, StoryDisplayType(..))
 import Updates exposing (getStories, update)
 import Views exposing (view)
 
@@ -42,6 +42,14 @@ actionForKeypress model code =
 
                 Nothing ->
                     Noop
+
+        'v' ->
+            case model.storyDisplayType of
+                Titles ->
+                    SetStoryDisplayType Full
+
+                Full ->
+                    SetStoryDisplayType Titles
 
         k ->
             Debug.log (toString k) Noop
