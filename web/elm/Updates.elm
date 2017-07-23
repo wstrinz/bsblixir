@@ -38,17 +38,33 @@ update msg model =
             SetFeedToAdd feedUrl ->
                 ( { model | feedToAdd = feedUrl }, Cmd.none )
 
-            UpdateStory story ->
-                ( { model | requestStatus = { status = "updating story " ++ (toString story) } }, updateStory story )
+            UpdateStory updateScore story ->
+                ( { model | requestStatus = { status = "updating story " ++ (toString story) } }, updateStory updateScore story )
 
-            UpdateStoryResponse (Ok storyResp) ->
+            UpdateStoryResponse updateScore (Ok storyResp) ->
                 let
+                    currScore =
+                        case model.currentStory of
+                            Just story ->
+                                story.score
+
+                            Nothing ->
+                                storyResp.score
+
+                    updatedStory =
+                        case updateScore of
+                            True ->
+                                storyResp
+
+                            False ->
+                                { storyResp | score = currScore }
+
                     updatedStories =
                         updateStoryList storyResp model.stories
                 in
                     ( { model | requestStatus = { status = "updated story " ++ (toString storyResp) }, stories = updatedStories, currentStory = reloadCurrent updatedStories model.currentStory }, Cmd.none )
 
-            UpdateStoryResponse (Err storyResp) ->
+            UpdateStoryResponse updateScore (Err storyResp) ->
                 ( { model | requestStatus = { status = "update story failed! " ++ (toString storyResp) } }, Cmd.none )
 
             MarkStory story ->
@@ -101,7 +117,7 @@ markStoryTask story readVal =
             Cmd.none
 
         Just s ->
-            Task.perform UpdateStory (Task.succeed { s | read = readVal })
+            Task.perform (UpdateStory False) (Task.succeed { s | read = readVal })
 
 
 updateIfMatches : Story -> Story -> Story
@@ -134,9 +150,9 @@ getStories =
     Http.send LoadStory <| Http.get "/stories" storyListDecorder
 
 
-updateStory : Story -> Cmd Msg
-updateStory story =
-    Http.send UpdateStoryResponse <| Http.post ("/stories/" ++ (toString story.id)) (Http.jsonBody (storyEncoder story)) storyRespDecoder
+updateStory : Bool -> Story -> Cmd Msg
+updateStory updateScore story =
+    Http.send (UpdateStoryResponse updateScore) <| Http.post ("/stories/" ++ (toString story.id)) (Http.jsonBody (storyEncoder story)) storyRespDecoder
 
 
 currentOrFirstStory : Model -> List Story -> Maybe Story

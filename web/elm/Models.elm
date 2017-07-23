@@ -67,8 +67,8 @@ type Msg
     | AddFeedResponse (Result Http.Error Feed)
     | NextStory
     | PrevStory
-    | UpdateStory Story
-    | UpdateStoryResponse (Result Http.Error Story)
+    | UpdateStory Bool Story
+    | UpdateStoryResponse Bool (Result Http.Error Story)
     | MarkStory Story
     | ToggleControlPanel
     | SetView View
