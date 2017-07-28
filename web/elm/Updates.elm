@@ -60,7 +60,7 @@ update msg model =
                                 { storyResp | score = currScore }
 
                     updatedStories =
-                        updateStoryList updateStory model.stories
+                        updateStoryList updatedStory model.stories
                 in
                     ( { model | requestStatus = { status = "updated story " ++ (toString storyResp) }, stories = updatedStories, currentStory = reloadCurrent updatedStories model.currentStory }, Cmd.none )
 
