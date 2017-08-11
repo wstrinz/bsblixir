@@ -75,6 +75,7 @@ type Msg
     | SelectStory (Maybe Story)
     | OpenStory Story
     | SetStoryDisplayType StoryDisplayType
+    | SetCurrentFeed Feed
 
 
 blankStory : Story

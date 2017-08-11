@@ -109,6 +109,9 @@ update msg model =
             SetStoryDisplayType newType ->
                 ( { model | storyDisplayType = newType }, Cmd.none )
 
+            SetCurrentFeed feed ->
+                ( model, Cmd.none )
+
 
 markStoryTask : Maybe Story -> Bool -> Cmd Msg
 markStoryTask story readVal =

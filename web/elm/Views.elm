@@ -82,6 +82,13 @@ storyDiv model story =
             ]
 
 
+feedEditView : Model -> Html.Html Msg
+feedEditView model =
+    div []
+        [ Html.h2 [] [ text "Feed Edit" ]
+        ]
+
+
 storyView : Model -> Html.Html Msg
 storyView model =
     let
