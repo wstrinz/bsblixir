@@ -47,7 +47,7 @@ defmodule BSB.Mixfile do
      {:dialyxir, "~> 0.4", only: [:dev], runtime: false},
      {:phoenix_live_reload, "~> 1.0", only: :dev},
      {:gettext, "~> 0.11"},
-     {:timex, "~> 3.1"},
+     {:timex, "~> 3.1.24"},
      {:quantum, ">= 1.9.0"},
      {:cowboy, "~> 1.0"}]
   end
