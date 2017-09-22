@@ -15,6 +15,8 @@ defmodule BSB.FeedView do
       description: feed.description,
       url: feed.url,
       feed_url: feed.feed_url,
+      base_score: feed.base_score,
+      decay_per_hour: feed.decay_per_hour,
       updated: feed.updated}
   end
 end

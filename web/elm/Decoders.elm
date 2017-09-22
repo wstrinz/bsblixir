@@ -38,6 +38,19 @@ storyEncoder story =
         ]
 
 
+feedEncoder : Feed -> JE.Value
+feedEncoder feed =
+    JE.object
+        [ ( "id", JE.int feed.id )
+        , ( "feed"
+          , JE.object
+                [ ( "base_score", JE.float feed.base_score )
+                , ( "decay_per_hour", JE.float feed.decay_per_hour )
+                ]
+          )
+        ]
+
+
 feedDecoder : JD.Decoder Feed
 feedDecoder =
     decode Feed
@@ -47,6 +60,8 @@ feedDecoder =
         |> required "feed_url" JD.string
         |> required "updated" JD.string
         |> required "id" JD.int
+        |> required "base_score" JD.float
+        |> required "decay_per_hour" JD.float
 
 
 feedRespDecoder : JD.Decoder Feed

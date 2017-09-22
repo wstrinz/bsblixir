@@ -123,6 +123,52 @@ update msg model =
             LoadFeeds (Err e) ->
                 Debug.crash "TODO: handle feed fetch error"
 
+            UpdateFeedModel updateType feed value ->
+                case updateType of
+                    Models.BaseScore ->
+                        ( updateFeedBaseScore feed value |> updateFeedModel model, Cmd.none )
+
+                    Models.DecayRate ->
+                        ( updateFeedDecayRate feed value |> updateFeedModel model, Cmd.none )
+
+            UpdateFeed feed ->
+                ( { model | requestStatus = { status = "updating story " ++ (toString feed) } }, updateFeed feed )
+
+            UpdateFeedResponse (Ok feedResp) ->
+                let
+                    updatedModel =
+                        updateFeedModel model feedResp
+                in
+                    ( { updatedModel | requestStatus = { status = "updated feed " ++ (toString feedResp) } }, Cmd.none )
+
+            UpdateFeedResponse (Result.Err e) ->
+                Debug.crash <| "feed update error " ++ toString e
+
+
+updateFeedDecayRate : Feed -> String -> Feed
+updateFeedDecayRate feed value =
+    case String.toFloat value of
+        Ok v ->
+            { feed | decay_per_hour = v }
+
+        Err _ ->
+            feed
+
+
+updateFeedBaseScore : Feed -> String -> Feed
+updateFeedBaseScore feed value =
+    case String.toFloat value of
+        Ok v ->
+            { feed | base_score = v }
+
+        Err _ ->
+            feed
+
+
+updateFeedModel : Model -> Feed -> Model
+updateFeedModel model feed =
+    { model | feeds = D.insert feed.id feed model.feeds }
+
 
 markStoryTask : Maybe Story -> Bool -> Cmd Msg
 markStoryTask story readVal =
@@ -167,6 +213,11 @@ getStories =
 updateStory : Bool -> Story -> Cmd Msg
 updateStory updateScore story =
     Http.send (UpdateStoryResponse updateScore) <| Http.post ("/stories/" ++ (toString story.id)) (Http.jsonBody (storyEncoder story)) storyRespDecoder
+
+
+updateFeed : Feed -> Cmd Msg
+updateFeed feed =
+    Http.send UpdateFeedResponse <| Http.post ("/feeds/" ++ (toString feed.id)) (Http.jsonBody (feedEncoder feed)) feedRespDecoder
 
 
 currentOrFirstStory : Model -> List Story -> Maybe Story

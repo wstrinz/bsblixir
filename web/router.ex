@@ -17,6 +17,7 @@ defmodule BSB.Router do
     resources "/feeds", BSB.FeedController, except: [:new, :edit]
 
     post "/stories/:id", BSB.StoryController, :update
+    post "/feeds/:id", BSB.FeedController, :update
   end
 
   scope "/", BSB do

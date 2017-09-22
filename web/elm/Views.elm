@@ -2,7 +2,7 @@ module Views exposing (..)
 
 import Html exposing (div, text)
 import Html.Events exposing (onClick, onInput)
-import Html.Attributes exposing (href, style)
+import Html.Attributes exposing (href, style, placeholder)
 import Json.Encode
 import Models exposing (Model, Story, Feed, Msg(..), StoryDisplayType(..), findNext, findRest, storyDictToList)
 import Dict as D
@@ -94,9 +94,19 @@ feedEditView feed model =
         ]
 
 
+inputEl : a -> (String -> Msg) -> Html.Html Msg
+inputEl placeholderValue action =
+    Html.input [ Html.Attributes.placeholder <| toString placeholderValue, onInput action ] []
+
+
 feedDiv : Model -> Feed -> Html.Html Msg
 feedDiv model feed =
-    div [] [ Html.h3 [] [ text feed.title ] ]
+    div []
+        [ Html.h3 [] [ text <| feed.title ]
+        , inputEl feed.decay_per_hour <| Models.UpdateFeedModel Models.DecayRate feed
+        , inputEl feed.base_score <| Models.UpdateFeedModel Models.BaseScore feed
+        , Html.button [ onClick <| UpdateFeed feed ] [ text "Save" ]
+        ]
 
 
 feedsView : Model -> Html.Html Msg

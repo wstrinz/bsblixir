@@ -26,6 +26,8 @@ type alias Feed =
     , feed_url : String
     , updated : String
     , id : Int
+    , base_score : Float
+    , decay_per_hour : Float
     }
 
 
@@ -64,6 +66,16 @@ type StoryDisplayType
     | Titles
 
 
+type FeedUpdateField
+    = BaseScore
+    | DecayRate
+
+
+type FeedUpdateValue
+    = Float
+    | String
+
+
 type Msg
     = Noop
     | FetchStory
@@ -81,6 +93,9 @@ type Msg
     | ToggleControlPanel
     | SetView View
     | SelectStory (Maybe Story)
+    | UpdateFeedModel FeedUpdateField Feed String
+    | UpdateFeed Feed
+    | UpdateFeedResponse (Result Http.Error Feed)
     | OpenStory Story
     | SetStoryDisplayType StoryDisplayType
     | SetCurrentFeed Feed
