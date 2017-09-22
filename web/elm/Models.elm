@@ -195,7 +195,7 @@ initialModel =
     , requestStatus = { status = "init" }
     , feedToAdd = ""
     , currentStory = Nothing
-    , currentView = FeedsView
+    , currentView = StoryView
     , controlPanelVisible = False
     , storyDisplayType = Full
     }
