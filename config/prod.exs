@@ -14,7 +14,7 @@ use Mix.Config
 config :bsb, BSB.Endpoint,
   http: [port: {:system, "PORT"}],
   url: [host: "bsb.stri.nz"],
-  cache_static_manifest: "priv/static/manifest.json",
+  cache_static_manifest: "priv/static/cache_manifest.json",
   root: ".",
   server: true,
   version: Mix.Project.config[:version]
