@@ -37,6 +37,10 @@ type alias StoryDict =
     D.Dict Int Story
 
 
+type alias FeedDict =
+    D.Dict Int Feed
+
+
 type alias Model =
     { stories : StoryDict
     , requestStatus : RequestStatus
@@ -44,6 +48,7 @@ type alias Model =
     , currentStory : Maybe Story
     , controlPanelVisible : Bool
     , currentView : View
+    , feeds : FeedDict
     , storyDisplayType : StoryDisplayType
     }
 
@@ -51,6 +56,7 @@ type alias Model =
 type View
     = StoryView
     | FeedView Feed
+    | FeedsView
 
 
 type StoryDisplayType
@@ -60,8 +66,10 @@ type StoryDisplayType
 
 type Msg
     = Noop
-    | LoadStory (Result Http.Error (List Story))
     | FetchStory
+    | LoadStory (Result Http.Error (List Story))
+    | FetchFeeds
+    | LoadFeeds (Result Http.Error (List Feed))
     | SetFeedToAdd String
     | AddFeed
     | AddFeedResponse (Result Http.Error Feed)
@@ -137,26 +145,6 @@ findRest target currList =
             []
 
 
-
--- case target of
---     Nothing ->
---         []
---
---     Just targetStory ->
---         case currList of
---             [] ->
---                 []
---
---             hd :: [] ->
---                 currList
---
---             hd :: next :: tl ->
---                 if hd.id == targetStory.id then
---                     next :: tl
---                 else
---                     findRest target <| next :: tl
-
-
 storySort : Story -> Story -> Order
 storySort a b =
     case compare a.score b.score of
@@ -180,13 +168,19 @@ storyListToDict stories =
     D.fromList <| List.map (\s -> ( s.id, s )) stories
 
 
+feedListToDict : List Feed -> FeedDict
+feedListToDict stories =
+    D.fromList <| List.map (\s -> ( s.id, s )) stories
+
+
 initialModel : Model
 initialModel =
     { stories = D.fromList []
+    , feeds = D.fromList []
     , requestStatus = { status = "init" }
     , feedToAdd = ""
     , currentStory = Nothing
-    , currentView = StoryView
+    , currentView = FeedsView
     , controlPanelVisible = False
     , storyDisplayType = Full
     }

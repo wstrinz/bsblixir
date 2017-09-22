@@ -112,6 +112,17 @@ update msg model =
             SetCurrentFeed feed ->
                 ( model, Cmd.none )
 
+            FetchFeeds ->
+                ( model, getStories )
+
+            LoadFeeds (Ok feedsData) ->
+                ( { model | feeds = (feedListToDict feedsData) }
+                , Cmd.none
+                )
+
+            LoadFeeds (Err e) ->
+                Debug.crash "TODO: handle feed fetch error"
+
 
 markStoryTask : Maybe Story -> Bool -> Cmd Msg
 markStoryTask story readVal =
@@ -180,3 +191,8 @@ reloadCurrent stories currentStory =
 
         Just s ->
             D.get s.id stories
+
+
+getFeeds : Cmd Msg
+getFeeds =
+    Http.send LoadFeeds <| Http.get "/feeds" feedListDecoder

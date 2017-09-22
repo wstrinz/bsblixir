@@ -59,6 +59,11 @@ storyListDecorder =
     JD.at [ "data" ] (JD.list storyDecoder)
 
 
+feedListDecoder : JD.Decoder (List Feed)
+feedListDecoder =
+    JD.at [ "data" ] (JD.list feedDecoder)
+
+
 storyRespDecoder : JD.Decoder Story
 storyRespDecoder =
     JD.at [ "data" ] storyDecoder
