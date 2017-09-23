@@ -3,8 +3,10 @@ module Main exposing (..)
 import Char
 import Html
 import Keyboard
-import Models exposing (Model, Msg(..), initialModel, StoryDisplayType(..))
-import Updates exposing (getStories, getFeeds, update)
+import Models exposing (initialModel)
+import Types exposing (Model, Msg(..), StoryDisplayType(..))
+import Updates exposing (getFeeds, update)
+import RemoteApi exposing (getStories)
 import Views exposing (view)
 
 

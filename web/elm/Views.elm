@@ -4,7 +4,8 @@ import Html exposing (div, text)
 import Html.Events exposing (onClick, onInput)
 import Html.Attributes exposing (href, style, placeholder)
 import Json.Encode
-import Models exposing (Model, Story, Feed, Msg(..), StoryDisplayType(..), findNext, findRest, storyDictToList)
+import Models exposing (findNext, findRest, storyDictToList)
+import Types exposing (Model, Story, Feed, Msg(..), StoryDisplayType(..))
 import Dict as D
 
 
@@ -28,8 +29,8 @@ controls model =
                 , Html.input [ onInput SetFeedToAdd ] []
                 , Html.button [ onClick AddFeed ] [ text "add" ]
                 , Html.br [] []
-                , Html.button [ onClick <| SetView Models.StoryView ] [ text "Stories" ]
-                , Html.button [ onClick <| SetView Models.FeedsView ] [ text "Feeds" ]
+                , Html.button [ onClick <| SetView Types.StoryView ] [ text "Stories" ]
+                , Html.button [ onClick <| SetView Types.FeedsView ] [ text "Feeds" ]
                 , Html.p [] [ text model.requestStatus.status ]
                 , Html.button [ onClick PrevStory ] [ text "-" ]
                 , Html.button [ onClick NextStory ] [ text "+" ]
@@ -103,8 +104,8 @@ feedDiv : Model -> Feed -> Html.Html Msg
 feedDiv model feed =
     div []
         [ Html.h3 [] [ text <| feed.title ]
-        , inputEl feed.decay_per_hour <| Models.UpdateFeedModel Models.DecayRate feed
-        , inputEl feed.base_score <| Models.UpdateFeedModel Models.BaseScore feed
+        , inputEl feed.decay_per_hour <| UpdateFeedModel Types.DecayRate feed
+        , inputEl feed.base_score <| UpdateFeedModel Types.BaseScore feed
         , Html.button [ onClick <| UpdateFeed feed ] [ text "Save" ]
         ]
 
@@ -146,13 +147,13 @@ view model =
     let
         mainArea =
             case model.currentView of
-                Models.FeedsView ->
+                Types.FeedsView ->
                     feedsView
 
-                Models.StoryView ->
+                Types.StoryView ->
                     storyView
 
-                Models.FeedView f ->
+                Types.FeedView f ->
                     feedEditView f
     in
         div []

@@ -3,9 +3,11 @@ module Updates exposing (..)
 import Decoders exposing (..)
 import Http
 import Models exposing (..)
+import Types exposing (..)
 import Ports
 import Task
 import Dict as D exposing (Dict)
+import RemoteApi as Api
 
 
 update : Msg -> Model -> ( Model, Cmd Msg )
@@ -16,7 +18,7 @@ update msg model =
     in
         case msg of
             FetchStory ->
-                ( model, getStories )
+                ( model, Api.getStories )
 
             LoadStory (Ok storyData) ->
                 ( { model | stories = (storyListToDict storyData), currentStory = currentOrFirstStory model storyData }
@@ -27,7 +29,7 @@ update msg model =
                 ( { model | stories = D.singleton -1 (errStory e) }, Cmd.none )
 
             AddFeed ->
-                ( { model | requestStatus = { status = "adding " ++ model.feedToAdd } }, addFeed model )
+                ( { model | requestStatus = { status = "adding " ++ model.feedToAdd } }, Api.addFeed model )
 
             AddFeedResponse (Ok feedResp) ->
                 ( { model | requestStatus = { status = "added feed" } }, Cmd.none )
@@ -39,7 +41,7 @@ update msg model =
                 ( { model | feedToAdd = feedUrl }, Cmd.none )
 
             UpdateStory updateScore story ->
-                ( { model | requestStatus = { status = "updating story " ++ (toString story) } }, updateStory updateScore story )
+                ( { model | requestStatus = { status = "updating story " ++ (toString story) } }, Api.updateStory updateScore story )
 
             UpdateStoryResponse updateScore (Ok storyResp) ->
                 let
@@ -113,7 +115,7 @@ update msg model =
                 ( model, Cmd.none )
 
             FetchFeeds ->
-                ( model, getStories )
+                ( model, Api.getStories )
 
             LoadFeeds (Ok feedsData) ->
                 ( { model | feeds = (feedListToDict feedsData) }
@@ -125,14 +127,14 @@ update msg model =
 
             UpdateFeedModel updateType feed value ->
                 case updateType of
-                    Models.BaseScore ->
+                    BaseScore ->
                         ( updateFeedBaseScore feed value |> updateFeedModel model, Cmd.none )
 
-                    Models.DecayRate ->
+                    DecayRate ->
                         ( updateFeedDecayRate feed value |> updateFeedModel model, Cmd.none )
 
             UpdateFeed feed ->
-                ( { model | requestStatus = { status = "updating story " ++ (toString feed) } }, updateFeed feed )
+                ( { model | requestStatus = { status = "updating story " ++ (toString feed) } }, Api.updateFeed feed )
 
             UpdateFeedResponse (Ok feedResp) ->
                 let
@@ -198,26 +200,6 @@ updateStoryList story stories =
 insertOrUpdateStory : Model -> Story -> Model
 insertOrUpdateStory model story =
     { model | stories = D.insert story.id story model.stories }
-
-
-addFeed : Model -> Cmd Msg
-addFeed model =
-    Http.send AddFeedResponse <| Http.post "/feeds" (Http.jsonBody (feedAddEncoder model)) feedRespDecoder
-
-
-getStories : Cmd Msg
-getStories =
-    Http.send LoadStory <| Http.get "/stories" storyListDecorder
-
-
-updateStory : Bool -> Story -> Cmd Msg
-updateStory updateScore story =
-    Http.send (UpdateStoryResponse updateScore) <| Http.post ("/stories/" ++ (toString story.id)) (Http.jsonBody (storyEncoder story)) storyRespDecoder
-
-
-updateFeed : Feed -> Cmd Msg
-updateFeed feed =
-    Http.send UpdateFeedResponse <| Http.post ("/feeds/" ++ (toString feed.id)) (Http.jsonBody (feedEncoder feed)) feedRespDecoder
 
 
 currentOrFirstStory : Model -> List Story -> Maybe Story

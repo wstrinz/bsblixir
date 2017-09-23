@@ -3,7 +3,7 @@ module Decoders exposing (..)
 import Json.Decode as JD
 import Json.Decode.Pipeline exposing (decode, hardcoded, optional, required, requiredAt)
 import Json.Encode as JE
-import Models exposing (..)
+import Types exposing (..)
 
 
 storyDecoder : JD.Decoder Story
@@ -22,8 +22,7 @@ storyDecoder =
 
 feedAddEncoder : Model -> JE.Value
 feedAddEncoder model =
-    JE.object
-        [ ( "url", JE.string model.feedToAdd ) ]
+    JE.object [ ( "url", JE.string model.feedToAdd ) ]
 
 
 storyEncoder : Story -> JE.Value
