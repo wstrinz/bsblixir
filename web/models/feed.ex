@@ -66,7 +66,8 @@ defmodule BSB.Feed do
 
   def update_feeds do
     BSB.Repo.all(BSB.Feed)
-    |> Enum.map(&update_feed/1)
+    |> Enum.map(&(Task.async(fn -> update_feed(&1) end)))
+    |> Enum.map(&Task.await/1)
   end
 
   def seed do
