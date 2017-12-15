@@ -10,7 +10,7 @@ storyDecoder : JD.Decoder Story
 storyDecoder =
     decode Story
         |> required "title" JD.string
-        |> required "author" JD.string
+        |> optional "author" JD.string ""
         |> optional "summary" JD.string ""
         |> optional "body" JD.string ""
         |> required "updated" JD.string
