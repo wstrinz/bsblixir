@@ -1,10 +1,9 @@
 defmodule BSB.StoryFetcher do
   def parsed_time(t) do
     case Timex.parse(t, "{RFC822}") do
-      {:ok, parsed} -> parsed |> Ecto.DateTime.cast!
+      {:ok, parsed} -> parsed |> Ecto.DateTime.cast!()
       {:error, _} -> nil
     end
-
   end
 
   def entry_to_story(entry) do
@@ -28,14 +27,25 @@ defmodule BSB.StoryFetcher do
   end
 
   def feedparser_entry_to_story(entry, feed) do
+    # TODO: abstract this more and probably store in DB
+
+    weird_url_feeds = ["http://www.channel3000.com"]
+
+    url =
+      if feed.url in weird_url_feeds do
+        "#{feed.url}/#{entry.id}"
+      else
+        entry.url
+      end
+
     %BSB.Story{
       author: story_author(entry),
       title: entry.title,
       summary: Map.get(entry, :description, ""),
       body: entry.content,
-      url: entry.id,
+      url: url,
       score: BSB.ScoreCalculator.calc_score_for_story(entry, feed),
-      updated: entry.updated |> Ecto.DateTime.cast!,
+      updated: entry.updated |> Ecto.DateTime.cast!(),
       feed: feed
     }
   end
@@ -52,6 +62,7 @@ defmodule BSB.StoryFetcher do
     case ElixirFeedParser.parse(body) do
       {:ok, result} ->
         result.entries
+
       {:error, e} ->
         IO.puts("error parsing feed #{feed_url}")
         IO.inspect(e)
@@ -65,20 +76,22 @@ defmodule BSB.StoryFetcher do
 
     if curr_story do
       %{new_story | id: curr_story.id, feed_id: feed.id}
-      |> BSB.Story.changeset
-      |> BSB.Repo.update!
+      |> BSB.Story.changeset()
+      |> BSB.Repo.update!()
     else
       BSB.Story.changeset(%{new_story | feed_id: feed.id})
-      |> BSB.Repo.insert!
+      |> BSB.Repo.insert!()
     end
   end
 
   def remove_invalids(stories) do
-    {valid, invalid} = Enum.partition(stories, fn(ent) -> ent.updated != Nil end)
+    {valid, invalid} = Enum.partition(stories, fn ent -> ent.updated != Nil end)
+
     if !Enum.empty?(invalid) do
       IO.puts("some invalid entries found!")
       IO.inspect(Enum.at(invalid, 0))
     end
+
     valid
   end
 
@@ -87,11 +100,11 @@ defmodule BSB.StoryFetcher do
 
   def load_stories(feed) do
     get_entries_for(feed.feed_url)
-    |> Enum.map(fn(s) -> s
+    |> Enum.map(fn s ->
+      s
       |> feedparser_entry_to_story(feed)
       |> drop_if_invalid
       |> save_or_update_story(feed)
-     end)
+    end)
   end
-
 end
