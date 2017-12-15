@@ -4,15 +4,15 @@ defmodule BSB.Story do
   import Ecto.Query, only: [from: 2]
 
   schema "stories" do
-    field :author, :string
-    field :title, :string
-    field :subtitle, :string
-    field :summary, :string
-    field :body, :string
-    field :url, :string
-    field :read, :boolean
-    field :score, :float
-    field :updated, Ecto.DateTime
+    field(:author, :string)
+    field(:title, :string)
+    field(:subtitle, :string)
+    field(:summary, :string)
+    field(:body, :string)
+    field(:url, :string)
+    field(:read, :boolean)
+    field(:score, :float)
+    field(:updated, Ecto.DateTime)
     belongs_to(:feed, BSB.Feed)
 
     timestamps()
@@ -23,16 +23,30 @@ defmodule BSB.Story do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:author, :title, :subtitle, :summary, :updated, :body, :url, :read, :score, :feed_id])
+    |> cast(params, [
+      :author,
+      :title,
+      :subtitle,
+      :summary,
+      :updated,
+      :body,
+      :url,
+      :read,
+      :score,
+      :feed_id
+    ])
     |> validate_required([:title, :updated, :feed_id])
   end
 
   def story_for_url(url) do
-    (from s in BSB.Story,
+    from(
+      s in BSB.Story,
       where: s.url == ^url,
-      select: s)
-    |> BSB.Repo.all
+      select: s
+    )
+    |> BSB.Repo.all()
   end
+
   # http://feeds.feedburner.com/RockPaperShotgun
   # http://slatestarcodex.com/feed/
 end

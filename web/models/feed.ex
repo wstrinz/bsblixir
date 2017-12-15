@@ -3,14 +3,14 @@ defmodule BSB.Feed do
   use BSB.Web, :model
 
   schema "feeds" do
-    field :title, :string
-    field :description, :string
-    field :url, :string
-    field :feed_url, :string
-    field :updated, Ecto.DateTime
-    field :base_score, :float
-    field :decay_per_hour, :float
-    has_many :stories, BSB.Story
+    field(:title, :string)
+    field(:description, :string)
+    field(:url, :string)
+    field(:feed_url, :string)
+    field(:updated, Ecto.DateTime)
+    field(:base_score, :float)
+    field(:decay_per_hour, :float)
+    has_many(:stories, BSB.Story)
 
     timestamps()
   end
@@ -24,7 +24,15 @@ defmodule BSB.Feed do
   """
   def changeset(struct, params \\ %{}) do
     struct
-    |> cast(params, [:title, :description, :url, :feed_url, :updated, :decay_per_hour, :base_score])
+    |> cast(params, [
+      :title,
+      :description,
+      :url,
+      :feed_url,
+      :updated,
+      :decay_per_hour,
+      :base_score
+    ])
     |> validate_required([:title, :url, :feed_url, :updated])
   end
 
@@ -32,6 +40,7 @@ defmodule BSB.Feed do
     {:ok, %HTTPoison.Response{body: body}} = HTTPoison.get(feed_url, [], follow_redirect: true)
     #  {:ok, feed, _} = FeederEx.parse(body)
     IO.inspect(body)
+
     case ElixirFeedParser.parse(body) do
       {:ok, result} ->
         result
@@ -56,8 +65,8 @@ defmodule BSB.Feed do
   end
 
   def add_feed(url) do
-     get_feed(url)
-     |> BSB.Repo.insert
+    get_feed(url)
+    |> BSB.Repo.insert()
   end
 
   def update_feed(feed) do
@@ -66,13 +75,13 @@ defmodule BSB.Feed do
 
   def update_feeds do
     BSB.Repo.all(BSB.Feed)
-    |> Enum.map(&(Task.async(fn -> update_feed(&1) end)))
+    |> Enum.map(&Task.async(fn -> update_feed(&1) end))
     |> Enum.map(&Task.await/1)
   end
 
   def seed do
     ["http://feeds.feedburner.com/RockPaperShotgun", "https://hnrss.org/frontpage?points=50"]
     |> Enum.map(&add_feed/1)
-    |> Enum.map(fn({:ok, f}) -> update_feed(f) end)
+    |> Enum.map(fn {:ok, f} -> update_feed(f) end)
   end
 end

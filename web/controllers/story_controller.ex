@@ -5,11 +5,14 @@ defmodule BSB.StoryController do
   alias BSB.Story
 
   def index(conn, _params) do
-    qry = from s in Story,
-      select: s,
-      order_by: [desc: :score, desc: :updated],
-      where: s.read == false,
-      limit: 20
+    qry =
+      from(
+        s in Story,
+        select: s,
+        order_by: [desc: :score, desc: :updated],
+        where: s.read == false,
+        limit: 20
+      )
 
     stories = Repo.all(qry)
 
@@ -25,6 +28,7 @@ defmodule BSB.StoryController do
         |> put_status(:created)
         |> put_resp_header("location", story_path(conn, :show, story))
         |> render("show.json", story: story)
+
       {:error, changeset} ->
         conn
         |> put_status(:unprocessable_entity)
@@ -44,6 +48,7 @@ defmodule BSB.StoryController do
     case Repo.update(changeset) do
       {:ok, story} ->
         render(conn, "show.json", story: story)
+
       {:error, changeset} ->
         conn
         |> put_status(:unprocessable_entity)
@@ -54,8 +59,6 @@ defmodule BSB.StoryController do
   def delete(conn, %{"id" => id}) do
     story = Repo.get!(Story, id)
 
-    # Here we use delete! (with a bang) because we expect
-    # it to always work (and if it does not, it will raise).
     Repo.delete!(story)
 
     send_resp(conn, :no_content, "")
