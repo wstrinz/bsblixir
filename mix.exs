@@ -65,6 +65,7 @@ defmodule BSB.Mixfile do
       {:gettext, "~> 0.11"},
       {:timex, "~> 3.1.24"},
       {:quantum, ">= 1.9.0"},
+      {:feeder_ex, ">= 1.1.0"},
       {:cowboy, "~> 1.0"}
     ]
   end

@@ -70,7 +70,15 @@ defmodule BSB.Feed do
   end
 
   def update_feed(feed) do
-    BSB.StoryFetcher.load_stories(feed)
+    # TODO: be more idiomatic about handling errors, maybe w/ supervisor?
+    try do
+      BSB.StoryFetcher.load_stories(feed)
+    rescue
+      ex ->
+        IO.puts("feed update error")
+        IO.inspect(ex)
+        []
+    end
   end
 
   def update_feeds do

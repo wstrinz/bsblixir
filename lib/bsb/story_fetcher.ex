@@ -28,7 +28,6 @@ defmodule BSB.StoryFetcher do
 
   def feedparser_entry_to_story(entry, feed) do
     # TODO: abstract this more and probably store in DB
-
     weird_url_feeds = ["http://www.channel3000.com"]
 
     url =
