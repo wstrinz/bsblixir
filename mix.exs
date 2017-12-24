@@ -36,7 +36,8 @@ defmodule BSB.Mixfile do
         :postgrex,
         :httpoison,
         :timex,
-        :quantum
+        :quantum,
+        :feeder_ex
       ],
       extra_applications: [:edeliver, :elixir_feed_parser]
     ]
