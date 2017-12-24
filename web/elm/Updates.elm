@@ -78,8 +78,14 @@ update msg model =
                 let
                     newCurr =
                         nextOrHead model.currentStory <| storyDictToList model.stories
+
+                    afterNext =
+                        findRest newCurr (storyDictToList model.stories) |> List.take 1
+
+                    cmds =
+                        loadOrMarkStory newCurr afterNext
                 in
-                    ( { model | currentStory = newCurr }, markStoryTask newCurr True )
+                    ( { model | currentStory = newCurr }, cmds )
 
             PrevStory ->
                 let
@@ -145,6 +151,9 @@ update msg model =
 
             UpdateFeedResponse (Result.Err e) ->
                 Debug.crash <| "feed update error " ++ toString e
+
+            FetchMoreStories ->
+                ( model, Api.getMoreStories model )
 
 
 updateFeedDecayRate : Feed -> String -> Feed
@@ -229,3 +238,25 @@ reloadCurrent stories currentStory =
 getFeeds : Cmd Msg
 getFeeds =
     Http.send LoadFeeds <| Http.get "/feeds" feedListDecoder
+
+
+loadOrMarkStory : Maybe Story -> List Story -> Cmd Msg
+loadOrMarkStory story restOfStories =
+    let
+        markcmd =
+            markStoryTask story True
+
+        otherCmds =
+            case restOfStories of
+                [] ->
+                    [ fetchMoreStoriesTask ]
+
+                _ ->
+                    []
+    in
+        Cmd.batch <| markcmd :: otherCmds
+
+
+fetchMoreStoriesTask : Cmd Msg
+fetchMoreStoriesTask =
+    Task.succeed FetchMoreStories |> Task.perform identity

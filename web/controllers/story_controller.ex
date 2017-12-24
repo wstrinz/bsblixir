@@ -4,7 +4,10 @@ defmodule BSB.StoryController do
   use BSB.Web, :controller
   alias BSB.Story
 
-  def index(conn, _params) do
+  def index(conn, params) do
+    ps = params
+    IO.inspect(ps)
+
     qry =
       from(
         s in Story,

@@ -97,3 +97,4 @@ type Msg
     | OpenStory Story
     | SetStoryDisplayType StoryDisplayType
     | SetCurrentFeed Feed
+    | FetchMoreStories

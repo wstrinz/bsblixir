@@ -3,6 +3,7 @@ module RemoteApi exposing (..)
 import Http
 import Types exposing (..)
 import Decoders exposing (..)
+import Dict
 
 
 addFeed : Model -> Cmd Msg
@@ -13,6 +14,15 @@ addFeed model =
 getStories : Cmd Msg
 getStories =
     Http.send LoadStory <| Http.get "/stories" storyListDecorder
+
+
+getMoreStories : Model -> Cmd Msg
+getMoreStories model =
+    let
+        skipIds =
+            model.stories |> Dict.values |> List.map .id |> List.map toString
+    in
+        Http.send LoadStory <| Http.get ("/stories" ++ "?skip=[" ++ String.join "," skipIds ++ "]") storyListDecorder
 
 
 updateStory : Bool -> Story -> Cmd Msg
