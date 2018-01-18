@@ -32,7 +32,7 @@ elm-stuff/
 *.beam
 
 # ignore mix lock for deployment which is maybe not the right choice
-mix.lock
+# mix.lock
 
 # releases dir
 /rel
