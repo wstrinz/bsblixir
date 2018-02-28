@@ -21,9 +21,7 @@ update msg model =
                 ( model, Api.getStories )
 
             LoadStory (Ok storyData) ->
-                ( { model | stories = (storyListToDict storyData), currentStory = currentOrFirstStory model storyData }
-                , markStoryTask (List.head storyData) True
-                )
+                ( { model | stories = (storyListToDict storyData) }, Cmd.none )
 
             LoadStory (Err e) ->
                 ( { model | stories = D.singleton -1 (errStory e) }, Cmd.none )

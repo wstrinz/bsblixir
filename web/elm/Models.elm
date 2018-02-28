@@ -62,7 +62,7 @@ findRest target currList =
                 |> withDefault []
 
         Nothing ->
-            []
+            currList
 
 
 storySort : Story -> Story -> Order
