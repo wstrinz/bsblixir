@@ -1,4 +1,4 @@
-from nextjournal/docker-elixir:1.4.1
+from nextjournal/docker-elixir:1.6.2
 
 RUN apk --update add bash grep coreutils inotify-tools openssl-dev git build-base \
   && rm -fr /var/cache/apk/*
