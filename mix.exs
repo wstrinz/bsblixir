@@ -5,7 +5,7 @@ defmodule BSB.Mixfile do
     [
       app: :bsb,
       version: "0.0.#{committed_at()}",
-      elixir: "~> 1.6.0-dev",
+      elixir: "~> 1.6.2",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       build_embedded: Mix.env() == :prod,
