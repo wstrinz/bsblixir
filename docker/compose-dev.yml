@@ -1,0 +1,39 @@
+version: "2.0"
+services:
+  shared:
+    extends:
+      service: shared
+      file: compose-base.yml
+
+  postgres:
+    extends:
+      service: postgres
+      file: compose-base.yml
+    ports:
+      - "5432:5432"
+
+  elm:
+    extends:
+      service: elm
+      file: compose-base.yml
+    volumes_from:
+      - shared
+
+  phoenix:
+    extends:
+      service: phoenix
+      file: compose-base.yml
+    environment:
+      MIX_ENV: dev
+      START_BRUNCH: "false"
+    command: |
+      /bin/sh -c "
+        mix do deps.get, compile, ecto.create, ecto.migrate
+        while true; do sleep 10; done
+      "
+    ports:
+      - "4000:4000"
+    depends_on:
+      - postgres
+    volumes_from:
+      - shared

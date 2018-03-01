@@ -6,14 +6,20 @@ use Mix.Config
 # The watchers configuration can be used to run external
 # watchers to your application. For example, we use it
 # with brunch.io to recompile .js and .css sources.
+
+watchers =
+  case System.get_env("START_BRUNCH") do
+    "false" -> []
+    _ ->
+      [node: ["node_modules/brunch/bin/brunch", "watch", "--stdin", cd: Path.expand("../", __DIR__)]]
+  end
+
 config :bsb, BSB.Endpoint,
   http: [port: 4000],
   debug_errors: true,
   code_reloader: true,
   check_origin: false,
-  watchers: [node: ["node_modules/brunch/bin/brunch", "watch", "--stdin",
-                    cd: Path.expand("../", __DIR__)]]
-
+  watchers: watchers
 
 # Watch static and templates for browser reloading.
 config :bsb, BSB.Endpoint,
@@ -39,5 +45,5 @@ config :bsb, BSB.Repo,
   username: "postgres",
   password: "postgres",
   database: "bsb_dev",
-  hostname: "localhost",
+  hostname: System.get_env("PGHOST") || "localhost",
   pool_size: 10

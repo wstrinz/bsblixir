@@ -15,5 +15,5 @@ config :bsb, BSB.Repo,
   username: "postgres",
   password: "postgres",
   database: "bsb_test",
-  hostname: "localhost",
+  hostname: System.get_env("PGHOST") || "localhost",
   pool: Ecto.Adapters.SQL.Sandbox
