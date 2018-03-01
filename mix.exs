@@ -59,7 +59,7 @@ defmodule BSB.Mixfile do
       {:phoenix_html, "~> 2.6"},
       {:edeliver, "~> 1.4.2"},
       {:distillery, "~> 1.3.5"},
-      {:httpoison, "~> 0.13"},
+      {:httpoison, "~> 1.0"},
       {:elixir_feed_parser, "~> 2.0"},
       {:dialyxir, "~> 0.4", only: [:dev], runtime: false},
       {:phoenix_live_reload, "~> 1.0", only: :dev},
