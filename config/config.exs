@@ -20,12 +20,13 @@ config :bsb, BSB.Endpoint,
 # Configures Elixir's Logger
 config :logger, :console,
   format: "$time $metadata[$level] $message\n",
-  metadata: [:request_id]
+  metadata: [:request_id],
+  level: :debug
 
 config :bsb, BSB.Scheduler,
   jobs: [
-    "*/15 * * * *": {BSB.Feed, :update_feeds, []},
-    "@hourly": {BSB.ScoreCalculator, :recalculate_scores, []}
+    {"*/15 * * * *", {BSB.Feed, :update_feeds, []}},
+    {"@hourly", {BSB.ScoreCalculator, :recalculate_scores, []}}
   ]
 
 # Import environment specific config. This must remain at the bottom
