@@ -13,7 +13,7 @@ defmodule BSB do
       # Start the endpoint when the application starts
       supervisor(BSB.Endpoint, []),
       # Start your own worker by calling: BSB.Worker.start_link(arg1, arg2, arg3)
-      # worker(BSB.Worker, [arg1, arg2, arg3]),
+      worker(BSB.Scheduler, [])
     ]
 
     # See http://elixir-lang.org/docs/stable/elixir/Supervisor.html

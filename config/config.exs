@@ -15,8 +15,7 @@ config :bsb, BSB.Endpoint,
   url: [host: "localhost"],
   secret_key_base: "k7XjbuxjLrJaHLOuzyTFtPadaolKPC8dwuqua+WVE5z60t/BrWSY48VCD0f2QJfl",
   render_errors: [view: BSB.ErrorView, accepts: ~w(html json)],
-  pubsub: [name: BSB.PubSub,
-           adapter: Phoenix.PubSub.PG2]
+  pubsub: [name: BSB.PubSub, adapter: Phoenix.PubSub.PG2]
 
 # Configures Elixir's Logger
 config :logger, :console,
@@ -31,4 +30,4 @@ config :quantum, :bsb,
 
 # Import environment specific config. This must remain at the bottom
 # of this file so it overrides the configuration defined above.
-import_config "#{Mix.env}.exs"
+import_config "#{Mix.env()}.exs"
