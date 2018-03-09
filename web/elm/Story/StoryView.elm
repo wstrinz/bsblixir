@@ -6,6 +6,7 @@ import Html.Events exposing (onClick)
 import Types exposing (..)
 import Models
 import Json.Encode
+import Date.Extra as DE
 
 
 rawHtml : String -> Html.Attribute msg
@@ -50,16 +51,28 @@ storyHeader story =
 
 storySubHeader : Model -> Story -> List (Html.Html Msg)
 storySubHeader model story =
-    case model.currentFeed of
-        Just feed ->
-            [ Html.h4 [] [ text story.author ] ]
+    let
+        formattedDate =
+            case DE.fromIsoString story.updated of
+                Ok date ->
+                    DE.toFormattedString "EEEE, MMMM d 'at' h:mm a" <| DE.add DE.Hour -6 date
 
-        Nothing ->
-            [ Html.h4
-                [ onClick <| SetCurrentFeed <| Models.feedForStory model story ]
-                [ text <| Models.feedTitleForStory model story ]
-            , Html.h4 [] [ text story.author ]
-            ]
+                Err _ ->
+                    story.updated
+
+        feedTitleString =
+            case model.currentFeed of
+                Just feed ->
+                    ""
+
+                Nothing ->
+                    Models.feedTitleForStory model story ++ " - "
+    in
+        [ Html.h4
+            [ onClick <| SetCurrentFeed <| Models.feedForStory model story ]
+            [ text <| feedTitleString ++ story.author ]
+        , Html.p [] [ text <| formattedDate ++ " (" ++ (toString story.score) ++ ")" ]
+        ]
 
 
 storyBody : Model -> Story -> List (Html.Html Msg)
@@ -81,9 +94,7 @@ storyBody model story =
                 Titles ->
                     []
     in
-        [ Html.p [] [ text <| story.updated ++ " (" ++ (toString story.score) ++ ")" ]
-        , Html.p contentArea []
-        ]
+        [ Html.p contentArea [] ]
 
 
 storyDiv : Model -> Story -> Html.Html Msg
