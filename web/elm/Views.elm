@@ -38,7 +38,7 @@ controls model =
                 div []
                     [ button [ onClick ToggleControlPanel ] [ text "Hide Controls" ]
                     , br [] []
-                    , button [ onClick FetchStory ] [ text "fetch" ]
+                    , button [ onClick <| FetchStory Nothing ] [ text "fetch" ]
                     , br [] []
                     , Html.input [ onInput SetFeedToAdd ] []
                     , button [ onClick AddFeed ] [ text "add" ]

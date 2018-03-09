@@ -17,8 +17,8 @@ update msg model =
             ( model, Cmd.none )
     in
         case msg of
-            FetchStory ->
-                ( model, Api.getStories )
+            FetchStory maybeMaxScore ->
+                ( model, Api.getStories maybeMaxScore )
 
             LoadStory (Ok storyData) ->
                 ( { model | stories = D.union model.stories (storyListToDict storyData) }, Cmd.none )
@@ -130,7 +130,7 @@ update msg model =
                 )
 
             FetchFeeds ->
-                ( model, Api.getStories )
+                ( model, getFeeds )
 
             LoadFeeds (Ok feedsData) ->
                 ( { model | feeds = (feedListToDict feedsData) }
@@ -207,7 +207,7 @@ loadMoreStoriesTask story =
             Cmd.none
 
         Just s ->
-            Task.perform (\x -> FetchStory) (Task.succeed s)
+            Task.perform (\x -> FetchStory <| Just s.score) (Task.succeed s)
 
 
 updateIfMatches : Story -> Story -> Story

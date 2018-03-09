@@ -80,7 +80,7 @@ type FeedUpdateValue
 
 type Msg
     = Noop
-    | FetchStory
+    | FetchStory (Maybe Float)
     | LoadStory (Result Http.Error (List Story))
     | FetchFeeds
     | LoadFeeds (Result Http.Error (List Feed))

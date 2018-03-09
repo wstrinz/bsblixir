@@ -10,9 +10,18 @@ addFeed model =
     Http.send AddFeedResponse <| Http.post "/feeds" (Http.jsonBody (feedAddEncoder model)) feedRespDecoder
 
 
-getStories : Cmd Msg
-getStories =
-    Http.send LoadStory <| Http.get "/stories" storyListDecorder
+getStories : Maybe Float -> Cmd Msg
+getStories maybeMaxScore =
+    let
+        url =
+            case maybeMaxScore of
+                Just score ->
+                    "/stories?maxScore=" ++ toString score
+
+                Nothing ->
+                    "/stories"
+    in
+        Http.send LoadStory <| Http.get url storyListDecorder
 
 
 updateStory : Bool -> Story -> Cmd Msg
