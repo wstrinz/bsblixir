@@ -8,7 +8,7 @@ defmodule BSB.Feed do
     field(:description, :string)
     field(:url, :string)
     field(:feed_url, :string)
-    field(:updated, Ecto.DateTime)
+    field(:updated, :naive_datetime)
     field(:base_score, :float)
     field(:decay_per_hour, :float)
     has_many(:stories, BSB.Story)

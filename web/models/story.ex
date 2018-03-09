@@ -12,7 +12,7 @@ defmodule BSB.Story do
     field(:url, :string)
     field(:read, :boolean)
     field(:score, :float)
-    field(:updated, Ecto.DateTime)
+    field(:updated, :naive_datetime)
     belongs_to(:feed, BSB.Feed)
 
     timestamps()
