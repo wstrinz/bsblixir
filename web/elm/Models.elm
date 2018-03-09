@@ -122,9 +122,14 @@ initialModel =
     }
 
 
+feedForStory : Model -> Story -> Maybe Feed
+feedForStory model story =
+    D.get story.feedId model.feeds
+
+
 feedTitleForStory : Model -> Story -> String
 feedTitleForStory model story =
-    case D.get story.feedId model.feeds of
+    case feedForStory model story of
         Just feed ->
             feed.title
 

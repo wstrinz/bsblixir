@@ -1,6 +1,6 @@
 module Views exposing (..)
 
-import Html exposing (div, text, a, br, button)
+import Html exposing (div, text, a, br, button, h2)
 import Html.Events exposing (onClick, onInput)
 import Html.Attributes exposing (href, style, placeholder)
 import Json.Encode
@@ -35,6 +35,21 @@ controls model =
                 , button [ onClick PrevStory ] [ text "-" ]
                 , button [ onClick NextStory ] [ text "+" ]
                 , br [] []
+                ]
+
+
+appHeader : Model -> Html.Html Msg
+appHeader model =
+    case model.currentFeed of
+        Nothing ->
+            div [] []
+
+        Just feed ->
+            div []
+                [ Html.h3 []
+                    [ a [ href feed.url, style [ ( "color", "#000" ) ] ]
+                        [ text feed.title ]
+                    ]
                 ]
 
 
@@ -76,17 +91,33 @@ storyDiv model story =
 
                 Titles ->
                     []
-    in
-        div (List.concat [ commonAttrs, attrs ])
+
+        storyTitle =
             [ Html.h2 (titleAttrs story)
                 [ Html.a [ href story.url, style [ ( "color", "inherit" ) ] ]
                     [ text story.title ]
                 ]
-            , Html.h4 [] [ text <| Models.feedTitleForStory model story ]
-            , Html.h4 [] [ text story.author ]
-            , Html.p [] [ text <| story.updated ++ " (" ++ (toString story.score) ++ ")" ]
+            ]
+
+        storyHeader =
+            case model.currentFeed of
+                Just feed ->
+                    [ Html.h4 [] [ text story.author ] ]
+
+                Nothing ->
+                    [ Html.h4
+                        [ onClick <| SetCurrentFeed <| Models.feedForStory model story ]
+                        [ text <| Models.feedTitleForStory model story ]
+                    , Html.h4 [] [ text story.author ]
+                    ]
+
+        storyBody =
+            [ Html.p [] [ text <| story.updated ++ " (" ++ (toString story.score) ++ ")" ]
             , Html.p contentArea []
             ]
+    in
+        div (List.concat [ commonAttrs, attrs ])
+            (List.concat [ storyTitle, storyHeader, storyBody ])
 
 
 feedEditView : Feed -> Model -> Html.Html Msg
@@ -163,5 +194,6 @@ view model =
     in
         div []
             [ controls model
+            , appHeader model
             , mainArea model
             ]

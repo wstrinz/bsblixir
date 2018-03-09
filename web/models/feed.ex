@@ -96,7 +96,7 @@ defmodule BSB.Feed do
     from(
       s in BSB.Story,
       select: count(s.id),
-      where: s.feed_id == ^feed.id
+      where: s.feed_id == ^feed.id and s.read == false
     )
     |> BSB.Repo.one()
   end
