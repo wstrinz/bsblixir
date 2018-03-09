@@ -55,7 +55,7 @@ storySubHeader model story =
         formattedDate =
             case DE.fromIsoString story.updated of
                 Ok date ->
-                    DE.toFormattedString "EEEE, MMMM d 'at' h:mm a" <| DE.add DE.Hour -6 date
+                    DE.toFormattedString "h:mm a 'on' EEEE, MMMM d " <| DE.add DE.Hour -6 date
 
                 Err _ ->
                     story.updated
