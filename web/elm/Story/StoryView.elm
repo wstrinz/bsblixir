@@ -107,7 +107,7 @@ storyView model =
         restStories =
             Models.storyDictToList (Models.currentStories model)
                 |> Models.findRest curr
-                |> List.take 20
+                |> List.take 5
 
         shownStories =
             case curr of

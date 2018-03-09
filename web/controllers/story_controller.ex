@@ -11,7 +11,7 @@ defmodule BSB.StoryController do
         select: s,
         order_by: [desc: :score, desc: :updated],
         where: s.read == false,
-        limit: 20
+        limit: 10
       )
 
     stories = Repo.all(qry)

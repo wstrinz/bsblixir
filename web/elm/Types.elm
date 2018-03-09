@@ -49,6 +49,7 @@ type alias Model =
     , feedToAdd : String
     , currentStory : Maybe Story
     , controlPanelVisible : Bool
+    , showDebug : Bool
     , currentView : View
     , currentFeed : Maybe Feed
     , feeds : FeedDict
@@ -100,3 +101,4 @@ type Msg
     | OpenStory Story
     | SetStoryDisplayType StoryDisplayType
     | SetCurrentFeed (Maybe Feed)
+    | SetShowDebug Bool

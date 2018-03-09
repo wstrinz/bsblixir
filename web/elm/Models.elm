@@ -118,6 +118,7 @@ initialModel =
     , currentFeed = Nothing
     , currentView = StoryView
     , controlPanelVisible = False
+    , showDebug = False
     , storyDisplayType = Full
     }
 

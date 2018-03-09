@@ -1,35 +1,53 @@
 module Views exposing (..)
 
-import Html exposing (div, text, a, br, button, h2)
-import Html.Events exposing (onClick, onInput)
-import Html.Attributes exposing (href, style, placeholder)
 import Dict as D
-import Types exposing (Model, Story, Feed, Msg(..), StoryDisplayType(..))
+import Html exposing (a, br, button, div, h2, text)
+import Html.Attributes exposing (href, placeholder, style)
+import Html.Events exposing (onClick, onInput)
+import Models
 import Story.StoryView exposing (storyView)
+import Types exposing (Feed, Model, Msg(..), Story, StoryDisplayType(..))
+
+
+debugDiv : Model -> Html.Html Msg
+debugDiv model =
+    if model.showDebug then
+        div []
+            [ Html.p [] [ text model.requestStatus.status ]
+            , Html.p [] [ text <| toString <| List.map (.title) <| Models.storyDictToList model.stories ]
+            , Html.p [] [ text <| toString <| List.map (.title) <| Models.findRest model.currentStory <| Models.storyDictToList model.stories ]
+            ]
+    else
+        div [] []
 
 
 controls : Model -> Html.Html Msg
 controls model =
-    case model.controlPanelVisible of
-        False ->
-            div [] [ button [ onClick ToggleControlPanel ] [ text "Show Controls" ] ]
+    let
+        debugToggle =
+            if model.showDebug then
+                button [ onClick <| SetShowDebug False ] [ text "Hide Debug" ]
+            else
+                button [ onClick <| SetShowDebug True ] [ text "Show Debug" ]
+    in
+        case model.controlPanelVisible of
+            False ->
+                div [] [ button [ onClick ToggleControlPanel ] [ text "Show Controls" ] ]
 
-        True ->
-            div []
-                [ button [ onClick ToggleControlPanel ] [ text "Hide Controls" ]
-                , br [] []
-                , button [ onClick FetchStory ] [ text "fetch" ]
-                , br [] []
-                , Html.input [ onInput SetFeedToAdd ] []
-                , button [ onClick AddFeed ] [ text "add" ]
-                , br [] []
-                , button [ onClick <| SetView Types.StoryView ] [ text "Stories" ]
-                , button [ onClick <| SetView Types.FeedsView ] [ text "Feeds" ]
-                , Html.p [] [ text model.requestStatus.status ]
-                , button [ onClick PrevStory ] [ text "-" ]
-                , button [ onClick NextStory ] [ text "+" ]
-                , br [] []
-                ]
+            True ->
+                div []
+                    [ button [ onClick ToggleControlPanel ] [ text "Hide Controls" ]
+                    , br [] []
+                    , button [ onClick FetchStory ] [ text "fetch" ]
+                    , br [] []
+                    , Html.input [ onInput SetFeedToAdd ] []
+                    , button [ onClick AddFeed ] [ text "add" ]
+                    , br [] []
+                    , button [ onClick <| SetView Types.StoryView ] [ text "Stories" ]
+                    , button [ onClick <| SetView Types.FeedsView ] [ text "Feeds" ]
+                    , debugToggle
+                    , debugDiv model
+                    ]
 
 
 appHeader : Model -> Html.Html Msg

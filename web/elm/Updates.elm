@@ -21,7 +21,7 @@ update msg model =
                 ( model, Api.getStories )
 
             LoadStory (Ok storyData) ->
-                ( { model | stories = (storyListToDict storyData) }, Cmd.none )
+                ( { model | stories = D.union model.stories (storyListToDict storyData) }, Cmd.none )
 
             LoadStory (Err e) ->
                 ( { model | stories = D.singleton -1 (errStory e) }, Cmd.none )
@@ -74,10 +74,21 @@ update msg model =
 
             NextStory ->
                 let
+                    storyList =
+                        storyDictToList <| Models.currentStories model
+
                     newCurr =
-                        nextOrHead model.currentStory <| storyDictToList <| Models.currentStories model
+                        nextOrHead model.currentStory storyList
+
+                    remainingStories =
+                        List.length <| findRest newCurr storyList
                 in
-                    ( { model | currentStory = newCurr }, markStoryTask newCurr True )
+                    case remainingStories > 2 of
+                        True ->
+                            ( { model | currentStory = newCurr }, markStoryTask newCurr True )
+
+                        False ->
+                            ( { model | currentStory = newCurr }, Cmd.batch [ markStoryTask newCurr True, loadMoreStoriesTask newCurr ] )
 
             PrevStory ->
                 let
@@ -150,6 +161,9 @@ update msg model =
             UpdateFeedResponse (Result.Err e) ->
                 Debug.crash <| "feed update error " ++ toString e
 
+            SetShowDebug showBool ->
+                ( { model | showDebug = showBool }, Cmd.none )
+
 
 updateFeedDecayRate : Feed -> String -> Feed
 updateFeedDecayRate feed value =
@@ -184,6 +198,16 @@ markStoryTask story readVal =
 
         Just s ->
             Task.perform (UpdateStory False) (Task.succeed { s | read = readVal })
+
+
+loadMoreStoriesTask : Maybe Story -> Cmd Msg
+loadMoreStoriesTask story =
+    case story of
+        Nothing ->
+            Cmd.none
+
+        Just s ->
+            Task.perform (\x -> FetchStory) (Task.succeed s)
 
 
 updateIfMatches : Story -> Story -> Story
