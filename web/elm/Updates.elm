@@ -75,14 +75,14 @@ update msg model =
             NextStory ->
                 let
                     newCurr =
-                        nextOrHead model.currentStory <| storyDictToList model.stories
+                        nextOrHead model.currentStory <| storyDictToList <| Models.currentStories model
                 in
                     ( { model | currentStory = newCurr }, markStoryTask newCurr True )
 
             PrevStory ->
                 let
                     newCurr =
-                        nextOrHead model.currentStory (List.reverse <| storyDictToList model.stories)
+                        nextOrHead model.currentStory (List.reverse <| storyDictToList <| Models.currentStories model)
                 in
                     ( { model | currentStory = newCurr }, Cmd.none )
 
@@ -110,7 +110,13 @@ update msg model =
                 ( { model | storyDisplayType = newType }, Cmd.none )
 
             SetCurrentFeed maybeFeed ->
-                ( { model | currentFeed = maybeFeed, currentView = StoryView }, Cmd.none )
+                ( { model
+                    | currentFeed = maybeFeed
+                    , currentView = StoryView
+                    , controlPanelVisible = False
+                  }
+                , Cmd.none
+                )
 
             FetchFeeds ->
                 ( model, Api.getStories )
