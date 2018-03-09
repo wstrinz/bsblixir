@@ -109,8 +109,8 @@ update msg model =
             SetStoryDisplayType newType ->
                 ( { model | storyDisplayType = newType }, Cmd.none )
 
-            SetCurrentFeed feed ->
-                ( model, Cmd.none )
+            SetCurrentFeed maybeFeed ->
+                ( { model | currentFeed = maybeFeed, currentView = StoryView }, Cmd.none )
 
             FetchFeeds ->
                 ( model, Api.getStories )

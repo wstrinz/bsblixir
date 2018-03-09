@@ -16,6 +16,7 @@ storyDecoder =
         |> required "updated" JD.string
         |> required "url" JD.string
         |> required "read" JD.bool
+        |> required "feedId" JD.int
         |> required "score" JD.float
         |> required "id" JD.int
 

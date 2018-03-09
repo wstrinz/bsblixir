@@ -12,6 +12,7 @@ type alias Story =
     , updated : String
     , url : String
     , read : Bool
+    , feedId : Int
     , score : Float
     , id : Int
     }
@@ -48,6 +49,7 @@ type alias Model =
     , currentStory : Maybe Story
     , controlPanelVisible : Bool
     , currentView : View
+    , currentFeed : Maybe Feed
     , feeds : FeedDict
     , storyDisplayType : StoryDisplayType
     }
@@ -96,4 +98,4 @@ type Msg
     | UpdateFeedResponse (Result Http.Error Feed)
     | OpenStory Story
     | SetStoryDisplayType StoryDisplayType
-    | SetCurrentFeed Feed
+    | SetCurrentFeed (Maybe Feed)

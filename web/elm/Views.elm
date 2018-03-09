@@ -1,6 +1,6 @@
 module Views exposing (..)
 
-import Html exposing (div, text)
+import Html exposing (div, text, a)
 import Html.Events exposing (onClick, onInput)
 import Html.Attributes exposing (href, style, placeholder)
 import Json.Encode
@@ -82,6 +82,7 @@ storyDiv model story =
                 [ Html.a [ href story.url, style [ ( "color", "inherit" ) ] ]
                     [ text story.title ]
                 ]
+            , Html.h4 [] [ text <| Models.feedTitleForStory model story ]
             , Html.h4 [] [ text story.author ]
             , Html.p [] [ text <| story.updated ++ " (" ++ (toString story.score) ++ ")" ]
             , Html.p contentArea []
@@ -103,7 +104,7 @@ inputEl placeholderValue action =
 feedDiv : Model -> Feed -> Html.Html Msg
 feedDiv model feed =
     div []
-        [ Html.h3 [] [ text <| feed.title ]
+        [ Html.h3 [] [ a [ onClick <| SetCurrentFeed <| Just feed ] [ text feed.title ] ]
         , inputEl feed.decay_per_hour <| UpdateFeedModel Types.DecayRate feed
         , inputEl feed.base_score <| UpdateFeedModel Types.BaseScore feed
         , Html.button [ onClick <| UpdateFeed feed ] [ text "Save" ]
@@ -118,6 +119,7 @@ feedsView model =
     in
         div []
             [ Html.h2 [] [ text "Feeds" ]
+            , div [] [ a [ onClick <| SetCurrentFeed Nothing ] [ text "All Feeds" ] ]
             , div [] <| List.map (feedDiv model) feedList
             ]
 
@@ -129,7 +131,7 @@ storyView model =
             model.currentStory
 
         restStories =
-            storyDictToList model.stories |> findRest curr |> List.take 20
+            storyDictToList (Models.currentStories model) |> findRest curr |> List.take 20
 
         shownStories =
             case curr of

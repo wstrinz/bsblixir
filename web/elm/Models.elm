@@ -8,12 +8,12 @@ import Types exposing (..)
 
 blankStory : Story
 blankStory =
-    { title = "A story", author = "Me", summary = "this is a summary", content = "this is some story content", url = "#", id = -1, updated = "", read = False, score = 0 }
+    { title = "A story", author = "Me", summary = "this is a summary", content = "this is some story content", url = "#", id = -1, feedId = -1, updated = "", read = False, score = 0 }
 
 
 errStory : a -> Story
 errStory e =
-    { title = "Something went wrong", summary = (toString e), author = "Me", content = (toString e), url = "", id = -2, updated = "", read = False, score = 0 }
+    { title = "Something went wrong", summary = (toString e), author = "Me", content = (toString e), url = "", id = -2, feedId = -2, updated = "", read = False, score = 0 }
 
 
 storyForId : Int -> List Story -> Maybe Story
@@ -93,6 +93,20 @@ feedListToDict stories =
     D.fromList <| List.map (\s -> ( s.id, s )) stories
 
 
+currentStories : Model -> StoryDict
+currentStories model =
+    let
+        isInFeed feed storyId story =
+            feed.id == story.feedId
+    in
+        case model.currentFeed of
+            Nothing ->
+                model.stories
+
+            Just feed ->
+                D.filter (isInFeed feed) model.stories
+
+
 initialModel : Model
 initialModel =
     { stories = D.fromList []
@@ -100,7 +114,18 @@ initialModel =
     , requestStatus = { status = "init" }
     , feedToAdd = ""
     , currentStory = Nothing
+    , currentFeed = Nothing
     , currentView = StoryView
     , controlPanelVisible = False
     , storyDisplayType = Full
     }
+
+
+feedTitleForStory : Model -> Story -> String
+feedTitleForStory model story =
+    case D.get story.feedId model.feeds of
+        Just feed ->
+            feed.title
+
+        Nothing ->
+            "Unknown Feed"

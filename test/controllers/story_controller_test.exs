@@ -37,7 +37,8 @@ defmodule BSB.StoryControllerTest do
              "url" => story.url,
              "summary" => story.summary,
              "updated" => story.updated,
-             "score" => 0.0
+             "score" => 0.0,
+             "feedId" => nil
            }
   end
 

@@ -10,7 +10,8 @@ defmodule BSB.StoryView do
   end
 
   def render("story.json", %{story: story}) do
-    %{id: story.id,
+    %{
+      id: story.id,
       author: story.author,
       title: story.title,
       subtitle: story.subtitle,
@@ -19,6 +20,8 @@ defmodule BSB.StoryView do
       body: story.body,
       read: story.read,
       url: story.url,
-      updated: story.updated}
+      feedId: story.feed_id,
+      updated: story.updated
+    }
   end
 end
