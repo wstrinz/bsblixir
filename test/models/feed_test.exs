@@ -3,7 +3,13 @@ defmodule BSB.FeedTest do
 
   alias BSB.Feed
 
-  @valid_attrs %{description: "some content", feed_url: "some content", title: "some content", updated: %{day: 17, hour: 14, min: 0, month: 4, sec: 0, year: 2010}, url: "some content"}
+  @valid_attrs %{
+    description: "some content",
+    feed_url: "some content",
+    title: "some content",
+    updated: ~N[1990-03-05 00:10:50],
+    url: "some content"
+  }
   @invalid_attrs %{}
 
   test "changeset with valid attributes" do

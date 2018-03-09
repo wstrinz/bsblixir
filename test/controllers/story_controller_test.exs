@@ -10,7 +10,7 @@ defmodule BSB.StoryControllerTest do
     subtitle: "some content",
     summary: "some content",
     title: "some content",
-    updated: %{day: 17, hour: 14, min: 0, month: 4, sec: 0, year: 2010}
+    updated: ~N[1990-03-05 00:10:50]
   }
   @invalid_attrs %{}
 
