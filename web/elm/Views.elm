@@ -1,6 +1,6 @@
 module Views exposing (..)
 
-import Html exposing (div, text, a)
+import Html exposing (div, text, a, br, button)
 import Html.Events exposing (onClick, onInput)
 import Html.Attributes exposing (href, style, placeholder)
 import Json.Encode
@@ -18,23 +18,23 @@ controls : Model -> Html.Html Msg
 controls model =
     case model.controlPanelVisible of
         False ->
-            div [] [ Html.button [ onClick ToggleControlPanel ] [ text "Show Controls" ] ]
+            div [] [ button [ onClick ToggleControlPanel ] [ text "Show Controls" ] ]
 
         True ->
             div []
-                [ Html.button [ onClick ToggleControlPanel ] [ text "Hide Controls" ]
-                , Html.br [] []
-                , Html.button [ onClick FetchStory ] [ text "fetch" ]
-                , Html.br [] []
+                [ button [ onClick ToggleControlPanel ] [ text "Hide Controls" ]
+                , br [] []
+                , button [ onClick FetchStory ] [ text "fetch" ]
+                , br [] []
                 , Html.input [ onInput SetFeedToAdd ] []
-                , Html.button [ onClick AddFeed ] [ text "add" ]
-                , Html.br [] []
-                , Html.button [ onClick <| SetView Types.StoryView ] [ text "Stories" ]
-                , Html.button [ onClick <| SetView Types.FeedsView ] [ text "Feeds" ]
+                , button [ onClick AddFeed ] [ text "add" ]
+                , br [] []
+                , button [ onClick <| SetView Types.StoryView ] [ text "Stories" ]
+                , button [ onClick <| SetView Types.FeedsView ] [ text "Feeds" ]
                 , Html.p [] [ text model.requestStatus.status ]
-                , Html.button [ onClick PrevStory ] [ text "-" ]
-                , Html.button [ onClick NextStory ] [ text "+" ]
-                , Html.br [] []
+                , button [ onClick PrevStory ] [ text "-" ]
+                , button [ onClick NextStory ] [ text "+" ]
+                , br [] []
                 ]
 
 
@@ -104,10 +104,13 @@ inputEl placeholderValue action =
 feedDiv : Model -> Feed -> Html.Html Msg
 feedDiv model feed =
     div []
-        [ Html.h3 [] [ a [ onClick <| SetCurrentFeed <| Just feed ] [ text feed.title ] ]
+        [ Html.h3 []
+            [ a [ onClick <| SetCurrentFeed <| Just feed ]
+                [ text <| feed.title ++ " (" ++ (toString feed.unreadCount) ++ ")" ]
+            ]
         , inputEl feed.decay_per_hour <| UpdateFeedModel Types.DecayRate feed
         , inputEl feed.base_score <| UpdateFeedModel Types.BaseScore feed
-        , Html.button [ onClick <| UpdateFeed feed ] [ text "Save" ]
+        , button [ onClick <| UpdateFeed feed ] [ text "Save" ]
         ]
 
 

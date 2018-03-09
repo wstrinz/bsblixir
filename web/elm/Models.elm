@@ -93,18 +93,19 @@ feedListToDict stories =
     D.fromList <| List.map (\s -> ( s.id, s )) stories
 
 
+storyInFeed : Feed -> Int -> Story -> Bool
+storyInFeed feed storyId story =
+    feed.id == story.feedId
+
+
 currentStories : Model -> StoryDict
 currentStories model =
-    let
-        isInFeed feed storyId story =
-            feed.id == story.feedId
-    in
-        case model.currentFeed of
-            Nothing ->
-                model.stories
+    case model.currentFeed of
+        Nothing ->
+            model.stories
 
-            Just feed ->
-                D.filter (isInFeed feed) model.stories
+        Just feed ->
+            D.filter (storyInFeed feed) model.stories
 
 
 initialModel : Model

@@ -1,6 +1,7 @@
 defmodule BSB.Feed do
   use BSB.ModelHelper, :first
   use BSB.Web, :model
+  import Ecto.Query, only: [from: 2]
 
   schema "feeds" do
     field(:title, :string)
@@ -89,5 +90,14 @@ defmodule BSB.Feed do
     ["http://feeds.feedburner.com/RockPaperShotgun", "https://hnrss.org/frontpage?points=50"]
     |> Enum.map(&add_feed/1)
     |> Enum.map(fn {:ok, f} -> update_feed(f) end)
+  end
+
+  def unread_story_count(feed) do
+    from(
+      s in BSB.Story,
+      select: count(s.id),
+      where: s.feed_id == ^feed.id
+    )
+    |> BSB.Repo.one()
   end
 end

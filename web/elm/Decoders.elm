@@ -61,6 +61,7 @@ feedDecoder =
         |> required "updated" JD.string
         |> required "id" JD.int
         |> required "base_score" JD.float
+        |> required "unreadCount" JD.int
         |> required "decay_per_hour" JD.float
 
 

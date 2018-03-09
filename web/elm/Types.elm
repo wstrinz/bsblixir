@@ -26,6 +26,7 @@ type alias Feed =
     , updated : String
     , id : Int
     , base_score : Float
+    , unreadCount : Int
     , decay_per_hour : Float
     }
 

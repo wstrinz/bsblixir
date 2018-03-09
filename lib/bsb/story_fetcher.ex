@@ -84,7 +84,7 @@ defmodule BSB.StoryFetcher do
   end
 
   def remove_invalids(stories) do
-    {valid, invalid} = Enum.partition(stories, fn ent -> ent.updated != Nil end)
+    {valid, invalid} = Enum.split_with(stories, fn ent -> ent.updated != Nil end)
 
     if !Enum.empty?(invalid) do
       IO.puts("some invalid entries found!")

@@ -10,13 +10,16 @@ defmodule BSB.FeedView do
   end
 
   def render("feed.json", %{feed: feed}) do
-    %{id: feed.id,
+    %{
+      id: feed.id,
       title: feed.title,
       description: feed.description,
       url: feed.url,
       feed_url: feed.feed_url,
       base_score: feed.base_score,
       decay_per_hour: feed.decay_per_hour,
-      updated: feed.updated}
+      unreadCount: BSB.Feed.unread_story_count(feed),
+      updated: feed.updated
+    }
   end
 end
