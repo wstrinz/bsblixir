@@ -35,6 +35,5 @@ elm-stuff/
 # mix.lock
 
 # releases dir
-/rel
 .elixir_ls
 .deliver/releases/
