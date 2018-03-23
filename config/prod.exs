@@ -18,7 +18,8 @@ config :bsb, BSB.Endpoint,
   cache_static_manifest: "priv/static/cache_manifest.json",
   root: ".",
   server: true,
-  version: Mix.Project.config()[:version]
+  version: Mix.Project.config()[:version],
+  code_reloader: false
 
 # Do not print debug messages in production
 config :logger, level: :info

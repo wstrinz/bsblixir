@@ -2,7 +2,7 @@ APP="bsb"
 
 BUILD_HOST="bsb.stri.nz"
 BUILD_USER="deploy"
-BUILD_AT="/home/deploy/bsb_edeliver/app_release"
+BUILD_AT="/home/deploy/bsb_edeliver/app_build"
 
 PRODUCTION_HOSTS="bsb.stri.nz"
 PRODUCTION_USER="deploy"
