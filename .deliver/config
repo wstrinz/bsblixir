@@ -1,0 +1,18 @@
+APP="bsb"
+
+BUILD_HOST="bsb.stri.nz"
+BUILD_USER="deploy"
+BUILD_AT="/home/deploy/bsb_edeliver/app_release"
+
+PRODUCTION_HOSTS="bsb.stri.nz"
+PRODUCTION_USER="deploy"
+DELIVER_TO="/home/deploy/bsb_edeliver/app_release"
+
+pre_erlang_get_and_update_deps() {
+  local _prod_secret_path="/home/deploy/bsb_edeliver/app_config/prod.secret.exs"
+  if [ "$TARGET_MIX_ENV" = "prod" ]; then
+    __sync_remote "
+      ln -sfn '$_prod_secret_path' '$BUILD_AT/config/prod.secret.exs'
+    "
+  fi
+}

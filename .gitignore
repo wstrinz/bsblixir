@@ -37,3 +37,4 @@ elm-stuff/
 # releases dir
 /rel
 .elixir_ls
+.deliver/releases/
