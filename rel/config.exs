@@ -36,7 +36,6 @@ environment :prod do
   set(include_erts: true)
   set(include_src: false)
   set(cookie: :"pkV9$=SY^`?@CwqUAxFvx<Wm<*<a1yAKYhK)O7@5WUpAZ=;>;3cx*jPw}CiC8@gt")
-  set(output_dir: "rel/bsb")
 end
 
 # You may define one or more releases in this file.
