@@ -4,7 +4,7 @@ defmodule BSB.Mixfile do
   def project do
     [
       app: :bsb,
-      version: "0.1.1",
+      version: "0.1.#{committed_at()}",
       elixir: "~> 1.6.2",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
@@ -15,9 +15,9 @@ defmodule BSB.Mixfile do
     ]
   end
 
-  # defp committed_at do
-  #   System.cmd("git", ~w[log -1 --date=short --pretty=format:%ct]) |> elem(0)
-  # end
+  defp committed_at do
+    System.cmd("git", ~w[log -1 --date=short --pretty=format:%ct]) |> elem(0)
+  end
 
   # Configuration for the OTP application.
   #
