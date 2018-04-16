@@ -57,7 +57,7 @@ defmodule BSB.Mixfile do
       {:phoenix_ecto, "~> 3.0"},
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 2.6"},
-      {:edeliver, "~> 1.4.5"},
+      {:edeliver, "~> 1.5.0"},
       {:distillery, "~> 1.5.2", warn_missing: false},
       {:httpoison, "~> 1.0"},
       {:elixir_feed_parser, "~> 2.0"},
