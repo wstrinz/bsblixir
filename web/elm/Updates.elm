@@ -18,7 +18,7 @@ update msg model =
     in
         case msg of
             FetchStory maybeMaxScore ->
-                ( model, Api.getStories maybeMaxScore )
+                ( model, Api.getStories maybeMaxScore model )
 
             LoadStory (Ok storyData) ->
                 ( { model | stories = D.union model.stories (storyListToDict storyData) }, Cmd.none )

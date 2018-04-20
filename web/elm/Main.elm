@@ -13,7 +13,7 @@ import Views exposing (view)
 main : Program Never Model Msg
 main =
     Html.program
-        { init = ( initialModel, Cmd.batch [ getStories Nothing, getFeeds ] )
+        { init = ( initialModel, Cmd.batch [ getStories Nothing initialModel, getFeeds ] )
         , view = view
         , update = update
         , subscriptions = \model -> Keyboard.presses (actionForKeypress model)

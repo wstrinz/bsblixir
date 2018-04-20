@@ -4,12 +4,23 @@ defmodule BSB.StoryController do
   use BSB.Web, :controller
   alias BSB.Story
 
-  defp story_selector(query, params) do
-    if params["maxScore"] do
-      query |> where([s], s.read == false and s.score <= ^params["maxScore"])
+  defp query_if_present(query, params, param) do
+    if params[param] do
+      case param do
+        "maxScore" -> query |> where([s], s.score <= ^params["maxScore"])
+        "feed" -> query |> where([s], s.feed_id == ^params["feed"])
+        _ -> query
+      end
     else
-      query |> where([s], s.read == false)
+      query
     end
+  end
+
+  defp story_selector(query, params) do
+    query
+    |> where([s], s.read == false)
+    |> query_if_present(params, "maxScore")
+    |> query_if_present(params, "feed")
   end
 
   def index(conn, params) do
