@@ -32,8 +32,8 @@ storyAttrs model story =
         (List.concat [ commonAttrs, attrs ])
 
 
-storyHeader : Story -> Html.Html Msg
-storyHeader story =
+storyTitle : Story -> Html.Html Msg
+storyTitle story =
     let
         titleAttrs s =
             case s.read of
@@ -41,7 +41,7 @@ storyHeader story =
                     [ style [ ( "color", "#636363" ) ] ]
 
                 False ->
-                    [ style [] ]
+                    []
     in
         Html.h2 (titleAttrs story)
             [ Html.a [ href story.url, style [ ( "color", "inherit" ) ] ]
@@ -49,17 +49,9 @@ storyHeader story =
             ]
 
 
-storySubHeader : Model -> Story -> List (Html.Html Msg)
+storySubHeader : Model -> Story -> Html.Html Msg
 storySubHeader model story =
     let
-        formattedDate =
-            case DE.fromIsoString story.updated of
-                Ok date ->
-                    DE.toFormattedString "h:mm a 'on' EEEE, MMMM d " <| DE.add DE.Hour -6 date
-
-                Err _ ->
-                    story.updated
-
         feedTitleString =
             case model.currentFeed of
                 Just feed ->
@@ -68,14 +60,26 @@ storySubHeader model story =
                 Nothing ->
                     Models.feedTitleForStory model story ++ " - "
     in
-        [ Html.h4
-            [ onClick <| SetCurrentFeed <| Models.feedForStory model story ]
+        Html.h4
+            [ onClick <| SetCurrentFeed <| Models.feedForStory model story, style [ ( "width", "fit-content" ) ] ]
             [ text <| feedTitleString ++ story.author ]
-        , Html.p [] [ text <| formattedDate ++ " (" ++ (toString story.score) ++ ")" ]
-        ]
 
 
-storyBody : Model -> Story -> List (Html.Html Msg)
+storyDate : Story -> Html.Html Msg
+storyDate story =
+    let
+        formattedDate =
+            case DE.fromIsoString story.updated of
+                Ok date ->
+                    DE.toFormattedString "h:mm a 'on' EEEE, MMMM d " <| DE.add DE.Hour -6 date
+
+                Err _ ->
+                    story.updated
+    in
+        Html.p [] [ text <| formattedDate ++ " (" ++ (toString story.score) ++ ")" ]
+
+
+storyBody : Model -> Story -> Html.Html Msg
 storyBody model story =
     let
         displayContent story =
@@ -94,19 +98,25 @@ storyBody model story =
                 Titles ->
                     []
     in
-        [ Html.p contentArea [] ]
+        Html.p contentArea []
+
+
+storyHeader : Model -> Story -> Html.Html Msg
+storyHeader model story =
+    div [ style [ ( "width", "fit-content" ) ] ]
+        [ storyTitle story
+        , storySubHeader model story
+        , storyDate story
+        ]
 
 
 storyDiv : Model -> Story -> Html.Html Msg
 storyDiv model story =
     div
         (storyAttrs model story)
-        (storyHeader story
-            :: List.concat
-                [ storySubHeader model story
-                , storyBody model story
-                ]
-        )
+        [ storyHeader model story
+        , storyBody model story
+        ]
 
 
 storyView : Model -> Html.Html Msg
