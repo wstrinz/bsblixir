@@ -29,3 +29,6 @@ elmApp.ports.openUrl.subscribe((url) => {
 elmApp.ports.snapToTop.subscribe((url) => {
   window.scrollTo(0,0)
 })
+
+var version = document.querySelector("meta[name='x-version']").getAttribute("content");
+console.log("current version", version)
