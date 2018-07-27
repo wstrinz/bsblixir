@@ -25,3 +25,7 @@ const elmDiv = document.getElementById('elm-main')
 elmApp.ports.openUrl.subscribe((url) => {
   window.open(url)
 })
+
+elmApp.ports.snapToTop.subscribe((url) => {
+  window.scrollTo(0,0)
+})

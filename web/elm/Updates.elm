@@ -82,15 +82,18 @@ update msg model =
                 let
                     newCurr =
                         Models.currentStories model |> storyDictToList |> nextOrHead model.currentStory
+
+                    commands =
+                        Ports.snapToTop "_" :: markAndMaybeFetchMoreStoriesCmds newCurr model
                 in
-                    ( { model | currentStory = newCurr }, markStoryAndFetchMoreIfNeeded newCurr model )
+                    ( { model | currentStory = newCurr }, Cmd.batch commands )
 
             PrevStory ->
                 let
                     newCurr =
                         nextOrHead model.currentStory (List.reverse <| storyDictToList <| Models.currentStories model)
                 in
-                    ( { model | currentStory = newCurr }, Cmd.none )
+                    ( { model | currentStory = newCurr }, Ports.snapToTop "_" )
 
             ToggleControlPanel ->
                 ( { model | controlPanelVisible = not model.controlPanelVisible }, Cmd.none )
@@ -105,7 +108,7 @@ update msg model =
 
                     Just story ->
                         ( { model | currentStory = Just story }
-                        , markStoryAndFetchMoreIfNeeded (Just story) model
+                        , Cmd.batch <| Ports.snapToTop "_" :: markAndMaybeFetchMoreStoriesCmds (Just story) model
                         )
 
             SetView view ->
@@ -162,8 +165,8 @@ update msg model =
                 ( { model | showDebug = showBool }, Cmd.none )
 
 
-markStoryAndFetchMoreIfNeeded : Maybe Story -> Model -> Cmd Msg
-markStoryAndFetchMoreIfNeeded currentStory model =
+markAndMaybeFetchMoreStoriesCmds : Maybe Story -> Model -> List (Cmd Msg)
+markAndMaybeFetchMoreStoriesCmds currentStory model =
     let
         remainingStories =
             Models.currentStories model
@@ -171,12 +174,12 @@ markStoryAndFetchMoreIfNeeded currentStory model =
                 |> findRest currentStory
                 |> List.length
     in
-        case remainingStories > 2 of
+        case remainingStories > 3 of
             True ->
-                markStoryTask currentStory True
+                [ markStoryTask currentStory True ]
 
             False ->
-                Cmd.batch [ markStoryTask currentStory True, loadMoreStoriesTask currentStory ]
+                [ markStoryTask currentStory True, loadMoreStoriesTask currentStory ]
 
 
 updateFeedDecayRate : Feed -> String -> Feed
