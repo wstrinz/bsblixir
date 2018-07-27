@@ -79,16 +79,8 @@ update msg model =
 
                     newCurr =
                         nextOrHead model.currentStory storyList
-
-                    remainingStories =
-                        List.length <| findRest newCurr storyList
                 in
-                    case remainingStories > 2 of
-                        True ->
-                            ( { model | currentStory = newCurr }, markStoryTask newCurr True )
-
-                        False ->
-                            ( { model | currentStory = newCurr }, Cmd.batch [ markStoryTask newCurr True, loadMoreStoriesTask newCurr ] )
+                    ( { model | currentStory = newCurr }, markStoryAndFetchMoreIfNeeded newCurr storyList )
 
             PrevStory ->
                 let
@@ -109,7 +101,9 @@ update msg model =
                         noChange
 
                     Just story ->
-                        ( { model | currentStory = Just story }, markStoryTask (Just story) True )
+                        ( { model | currentStory = Just story }
+                        , markStoryAndFetchMoreIfNeeded (Just story) (storyDictToList <| Models.currentStories model)
+                        )
 
             SetView view ->
                 ( { model | currentView = view }, Cmd.none )
@@ -163,6 +157,22 @@ update msg model =
 
             SetShowDebug showBool ->
                 ( { model | showDebug = showBool }, Cmd.none )
+
+
+markStoryAndFetchMoreIfNeeded : Maybe Story -> List Story -> Cmd Msg
+markStoryAndFetchMoreIfNeeded currentStory storyList =
+    let
+        remainingStories =
+            List.length <| findRest currentStory storyList
+
+        --  <|
+    in
+        case remainingStories > 2 of
+            True ->
+                markStoryTask currentStory True
+
+            False ->
+                Cmd.batch [ markStoryTask currentStory True, loadMoreStoriesTask currentStory ]
 
 
 updateFeedDecayRate : Feed -> String -> Feed
