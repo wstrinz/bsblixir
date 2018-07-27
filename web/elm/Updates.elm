@@ -74,13 +74,10 @@ update msg model =
 
             NextStory ->
                 let
-                    storyList =
-                        storyDictToList <| Models.currentStories model
-
                     newCurr =
-                        nextOrHead model.currentStory storyList
+                        Models.currentStories model |> storyDictToList |> nextOrHead model.currentStory
                 in
-                    ( { model | currentStory = newCurr }, markStoryAndFetchMoreIfNeeded newCurr storyList )
+                    ( { model | currentStory = newCurr }, markStoryAndFetchMoreIfNeeded newCurr model )
 
             PrevStory ->
                 let
@@ -102,7 +99,7 @@ update msg model =
 
                     Just story ->
                         ( { model | currentStory = Just story }
-                        , markStoryAndFetchMoreIfNeeded (Just story) (storyDictToList <| Models.currentStories model)
+                        , markStoryAndFetchMoreIfNeeded (Just story) model
                         )
 
             SetView view ->
@@ -159,13 +156,14 @@ update msg model =
                 ( { model | showDebug = showBool }, Cmd.none )
 
 
-markStoryAndFetchMoreIfNeeded : Maybe Story -> List Story -> Cmd Msg
-markStoryAndFetchMoreIfNeeded currentStory storyList =
+markStoryAndFetchMoreIfNeeded : Maybe Story -> Model -> Cmd Msg
+markStoryAndFetchMoreIfNeeded currentStory model =
     let
         remainingStories =
-            List.length <| findRest currentStory storyList
-
-        --  <|
+            Models.currentStories model
+                |> storyDictToList
+                |> findRest currentStory
+                |> List.length
     in
         case remainingStories > 2 of
             True ->
