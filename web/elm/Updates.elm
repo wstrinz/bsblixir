@@ -62,7 +62,13 @@ update msg model =
                     updatedStories =
                         updateStoryList updatedStory model.stories
                 in
-                    ( { model | requestStatus = { status = "updated story " ++ (toString storyResp) }, stories = updatedStories, currentStory = reloadCurrent updatedStories model.currentStory }, Cmd.none )
+                    ( { model
+                        | requestStatus = { status = "updated story " ++ (toString storyResp) }
+                        , stories = updatedStories
+                        , currentStory = reloadCurrent updatedStories model.currentStory
+                      }
+                    , Cmd.none
+                    )
 
             UpdateStoryResponse updateScore (Err storyResp) ->
                 ( { model | requestStatus = { status = "update story failed! " ++ (toString storyResp) } }, Cmd.none )
