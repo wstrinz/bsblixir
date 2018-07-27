@@ -6,7 +6,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <meta name="description" content="">
     <meta name="author" content="">
-    <meta name="x-version" content="<%= Mix.Project.config[:version] %>">
+    <meta name="x-version" content="<%= Application.spec(:bsb, :vsn) %>">
 
     <title>BSB</title>
     <link rel="stylesheet" href="<%= static_path(@conn, "/css/app.css") %>">
