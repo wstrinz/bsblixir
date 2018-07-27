@@ -82,18 +82,15 @@ update msg model =
                 let
                     newCurr =
                         Models.currentStories model |> storyDictToList |> nextOrHead model.currentStory
-
-                    commands =
-                        Ports.snapToTop "_" :: markAndMaybeFetchMoreStoriesCmds newCurr model
                 in
-                    ( { model | currentStory = newCurr }, Cmd.batch commands )
+                    ( { model | currentStory = newCurr }, selectionCommands True newCurr model )
 
             PrevStory ->
                 let
                     newCurr =
                         nextOrHead model.currentStory (List.reverse <| storyDictToList <| Models.currentStories model)
                 in
-                    ( { model | currentStory = newCurr }, Ports.snapToTop "_" )
+                    ( { model | currentStory = newCurr }, selectionCommands False newCurr model )
 
             ToggleControlPanel ->
                 ( { model | controlPanelVisible = not model.controlPanelVisible }, Cmd.none )
@@ -108,7 +105,7 @@ update msg model =
 
                     Just story ->
                         ( { model | currentStory = Just story }
-                        , Cmd.batch <| Ports.snapToTop "_" :: markAndMaybeFetchMoreStoriesCmds (Just story) model
+                        , selectionCommands True (Just story) model
                         )
 
             SetView view ->
@@ -165,6 +162,14 @@ update msg model =
                 ( { model | showDebug = showBool }, Cmd.none )
 
 
+selectionCommands : Bool -> Maybe Story -> Model -> Cmd Msg
+selectionCommands markAndFetch currentStory model =
+    if markAndFetch then
+        Cmd.batch <| Ports.snapToTop "_" :: markAndMaybeFetchMoreStoriesCmds currentStory model
+    else
+        Ports.snapToTop "_"
+
+
 markAndMaybeFetchMoreStoriesCmds : Maybe Story -> Model -> List (Cmd Msg)
 markAndMaybeFetchMoreStoriesCmds currentStory model =
     let
@@ -174,12 +179,10 @@ markAndMaybeFetchMoreStoriesCmds currentStory model =
                 |> findRest currentStory
                 |> List.length
     in
-        case remainingStories > 3 of
-            True ->
-                [ markStoryTask currentStory True ]
-
-            False ->
-                [ markStoryTask currentStory True, loadMoreStoriesTask currentStory ]
+        if remainingStories > 3 then
+            [ markStoryTask currentStory True ]
+        else
+            [ markStoryTask currentStory True, loadMoreStoriesTask currentStory ]
 
 
 updateFeedDecayRate : Feed -> String -> Feed
