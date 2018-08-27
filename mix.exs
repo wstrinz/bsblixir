@@ -58,7 +58,7 @@ defmodule BSB.Mixfile do
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 2.6"},
       {:edeliver, "~> 1.5.0"},
-      {:distillery, "~> 1.5.2", warn_missing: false},
+      {:distillery, "~> 2.0.8", warn_missing: false},
       {:httpoison, "~> 1.0"},
       {:elixir_feed_parser, "~> 2.0"},
       {:dialyxir, "~> 0.4", only: [:dev], runtime: false},
