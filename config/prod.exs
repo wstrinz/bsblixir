@@ -18,7 +18,7 @@ config :bsb, BSB.Endpoint,
   cache_static_manifest: "priv/static/cache_manifest.json",
   root: ".",
   server: true,
-  version: Mix.Project.config()[:version],
+  version: "1.0",
   code_reloader: false,
   secret_key_base: Map.fetch!(System.get_env(), "SECRET_KEY_BASE")
 
