@@ -4,7 +4,7 @@ defmodule BSB.Mixfile do
   def project do
     [
       app: :bsb,
-      version: "0.1.#{committed_at()}",
+      version: "2018.11.14",
       elixir: "~> 1.6.2",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
