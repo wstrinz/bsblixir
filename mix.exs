@@ -4,8 +4,8 @@ defmodule BSB.Mixfile do
   def project do
     [
       app: :bsb,
-      version: "0.1.#{committed_at()}",
-      elixir: "~> 1.6.2",
+      version: "0.3.0",
+      elixir: "~> 1.7.4",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
       build_embedded: Mix.env() == :prod,
