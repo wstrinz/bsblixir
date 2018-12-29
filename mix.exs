@@ -4,7 +4,7 @@ defmodule BSB.Mixfile do
   def project do
     [
       app: :bsb,
-      version: "2018.12.11",
+      version: "2018.12.29",
       elixir: "~> 1.7.4",
       elixirc_paths: elixirc_paths(Mix.env()),
       compilers: [:phoenix, :gettext] ++ Mix.compilers(),
@@ -57,8 +57,6 @@ defmodule BSB.Mixfile do
       {:phoenix_ecto, "~> 3.0"},
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 2.6"},
-      {:edeliver, "~> 1.5.0"},
-      {:distillery, "~> 2.0.12", warn_missing: false},
       {:httpoison, "~> 1.0"},
       {:elixir_feed_parser, "~> 2.0"},
       {:dialyxir, "~> 0.4", only: [:dev], runtime: false},
@@ -66,8 +64,12 @@ defmodule BSB.Mixfile do
       {:gettext, "~> 0.11"},
       {:timex, "~> 3.1"},
       {:quantum, "~> 2.2"},
+      {:distillery, "~> 2.0", runtime: false},
+      {:bootleg, "~> 0.10", runtime: false},
+      {:bootleg_phoenix, "~> 0.2", runtime: false},
       {:feeder_ex, ">= 1.1.0"},
-      {:cowboy, "~> 1.0"}
+      {:cowboy, "~> 1.0"},
+      {:plug_cowboy, "~> 1.0"}
     ]
   end
 
