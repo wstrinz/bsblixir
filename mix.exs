@@ -64,7 +64,6 @@ defmodule BSB.Mixfile do
       {:bootleg, "~> 0.10", runtime: false},
       {:bootleg_phoenix, "~> 0.2", runtime: false},
       {:feeder_ex, ">= 1.1.0"},
-      {:cowboy, "~> 1.0"},
       {:plug_cowboy, "~> 1.0"}
     ]
   end
