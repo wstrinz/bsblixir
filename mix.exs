@@ -15,10 +15,6 @@ defmodule BSB.Mixfile do
     ]
   end
 
-  defp committed_at do
-    System.cmd("git", ~w[log -1 --date=short --pretty=format:%ct]) |> elem(0)
-  end
-
   # Configuration for the OTP application.
   #
   # Type `mix help compile.app` for more information.
@@ -39,7 +35,7 @@ defmodule BSB.Mixfile do
         :quantum,
         :feeder_ex
       ],
-      extra_applications: [:edeliver, :elixir_feed_parser]
+      extra_applications: [:elixir_feed_parser]
     ]
   end
 
