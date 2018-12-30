@@ -17,25 +17,31 @@ defmodule BSB.Mixfile do
 
   # Configuration for the OTP application.
   #
-  # Type `mix help compile.app` for more information.
+  # # Type `mix help compile.app` for more information.
+  # def application do
+  #   [
+  #     mod: {BSB, []},
+  #     applications: [
+  #       :phoenix,
+  #       :phoenix_pubsub,
+  #       :phoenix_html,
+  #       :logger,
+  #       :gettext,
+  #       :phoenix_ecto,
+  #       :postgrex,
+  #       :httpoison,
+  #       :timex,
+  #       :quantum,
+  #       :feeder_ex
+  #     ],
+  #     extra_applications: [:elixir_feed_parser]
+  #   ]
+  # end
+
   def application do
     [
       mod: {BSB, []},
-      applications: [
-        :phoenix,
-        :phoenix_pubsub,
-        :phoenix_html,
-        :cowboy,
-        :logger,
-        :gettext,
-        :phoenix_ecto,
-        :postgrex,
-        :httpoison,
-        :timex,
-        :quantum,
-        :feeder_ex
-      ],
-      extra_applications: [:elixir_feed_parser]
+      extra_applications: [:logger, :runtime_tools]
     ]
   end
 
