@@ -14,7 +14,7 @@ use Mix.Config
 config :bsb, BSB.Endpoint,
   load_from_system_env: true,
   http: [port: {:system, "PORT"}],
-  url: [host: "serene-shore-66417.herokuapp.com"],
+  url: [host: "bsb.stri.nz:56141"],
   cache_static_manifest: "priv/static/cache_manifest.json",
   root: ".",
   server: true,
