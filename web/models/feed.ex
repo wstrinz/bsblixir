@@ -38,7 +38,9 @@ defmodule BSB.Feed do
   end
 
   def feed_for_url(feed_url) do
-    {:ok, %HTTPoison.Response{body: body}} = HTTPoison.get(feed_url, [], follow_redirect: true)
+    {:ok, %HTTPoison.Response{body: body}} =
+      HTTPoison.get(feed_url, [], follow_redirect: true, hackney: [:insecure])
+
     #  {:ok, feed, _} = FeederEx.parse(body)
     case ElixirFeedParser.parse(body) do
       {:ok, result} ->
