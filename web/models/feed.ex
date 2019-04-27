@@ -11,6 +11,7 @@ defmodule BSB.Feed do
     field(:updated, :naive_datetime)
     field(:base_score, :float)
     field(:decay_per_hour, :float)
+    field(:error, :string)
     has_many(:stories, BSB.Story)
 
     timestamps()
@@ -32,6 +33,7 @@ defmodule BSB.Feed do
       :feed_url,
       :updated,
       :decay_per_hour,
+      :error,
       :base_score
     ])
     |> validate_required([:title, :url, :feed_url, :updated])
@@ -78,6 +80,7 @@ defmodule BSB.Feed do
       ex ->
         IO.puts("feed update error")
         IO.inspect(ex)
+        Ecto.Changeset.change(feed, %{error: Exception.format(:error, ex)}) |> BSB.Repo.update!()
         []
     end
   end

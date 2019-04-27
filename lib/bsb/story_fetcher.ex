@@ -105,5 +105,7 @@ defmodule BSB.StoryFetcher do
       |> drop_if_invalid
       |> save_or_update_story(feed)
     end)
+
+    Ecto.Changeset.change(feed, %{error: nil}) |> BSB.Repo.update!()
   end
 end
