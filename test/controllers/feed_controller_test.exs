@@ -28,7 +28,8 @@ defmodule BSB.FeedControllerTest do
              "updated" => feed.updated,
              "base_score" => 0.0,
              "decay_per_hour" => 1 / 96,
-             "unreadCount" => 0
+             "unreadCount" => 0,
+             "error" => feed.error
            }
   end
 
