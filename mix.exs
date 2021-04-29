@@ -40,7 +40,7 @@ defmodule BSB.Mixfile do
       {:elixir_feed_parser, "~> 2.1.0",
        git: "https://github.com/wstrinz/elixir-feed-parser.git",
        branch: "fix-date-whitespace-errors"},
-      {:dialyxir, "~> 0.4", only: [:dev], runtime: false},
+      {:dialyxir, "~> 1.1", only: [:dev], runtime: false},
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:gettext, "~> 0.11"},
       {:timex, "~> 3.1"},
