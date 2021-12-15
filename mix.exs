@@ -44,7 +44,7 @@ defmodule BSB.Mixfile do
       {:phoenix_live_reload, "~> 1.0", only: :dev},
       {:gettext, "~> 0.11"},
       {:timex, "~> 3.1"},
-      {:quantum, "~> 2.2"},
+      {:quantum, "~> 3.3"},
       {:distillery, "~> 2.0", runtime: false},
       {:bootleg, "~> 0.10", runtime: false},
       {:bootleg_phoenix, "~> 0.2", runtime: false},
