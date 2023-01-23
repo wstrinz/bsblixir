@@ -36,7 +36,7 @@ defmodule BSB.Mixfile do
       {:phoenix_ecto, "~> 3.0"},
       {:postgrex, ">= 0.0.0"},
       {:phoenix_html, "~> 2.6"},
-      {:httpoison, "~> 1.0"},
+      {:httpoison, "~> 2.0"},
       {:elixir_feed_parser, "~> 2.1.0",
        git: "https://github.com/wstrinz/elixir-feed-parser.git",
        branch: "fix-date-whitespace-errors"},
